@@ -1,0 +1,309 @@
+name: SSC Build Pipeline
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "*.tgz"
+      - "*.tar.gz"
+
+  workflow_dispatch:
+    inputs:
+      package_file:
+        description: "Enter package file name, e.g. animejs-3.2.1.tgz"
+        required: true
+        default: "animejs-3.2.1.tgz"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_ARTIFACT_BUCKET: https://ssc-collector.onrender.com/s3/prod-build-artifacts-2026
+      VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install yara-python semgrep
+
+      - name: Download NLTK Data
+        run: |
+          python -c "import nltk; nltk.download('stopwords')"
+
+      - name: Detect Package
+        id: detect_pkg
+        run: |
+          PACKAGE=""
+
+          echo "Trigger type: ${{ github.event_name }}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PACKAGE="${{ github.event.inputs.package_file }}"
+            if [ ! -f "$PACKAGE" ]; then
+              echo "Package $PACKAGE not found in root"
+              echo "skip_pipeline=true" >> $GITHUB_OUTPUT
+              echo "package_path=" >> $GITHUB_OUTPUT
+              echo "package_name=" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          else
+            BEFORE="${{ github.event.before }}"
+            SHA="${{ github.sha }}"
+            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              BEFORE=$(git hash-object -t tree /dev/null)
+            fi
+            FILES=$(git diff --name-only "$BEFORE" "$SHA" 2>/dev/null || true)
+            for f in $FILES; do
+              if [[ "$f" == *.tgz ]] || [[ "$f" == *.tar.gz ]]; then
+                if [[ "$f" != */* ]] && [ -f "$f" ]; then
+                  PACKAGE="$f"
+                  break
+                fi
+              fi
+            done
+          fi
+
+          if [ -z "$PACKAGE" ]; then
+            echo "No new package detected in this commit → skipping pipeline"
+            echo "skip_pipeline=true" >> $GITHUB_OUTPUT
+            echo "package_path=" >> $GITHUB_OUTPUT
+            echo "package_name=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Package detected: $PACKAGE"
+          PKG_NAME=$(basename "$PACKAGE")
+          echo "skip_pipeline=false" >> $GITHUB_OUTPUT
+          echo "package_path=$PACKAGE" >> $GITHUB_OUTPUT
+          echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
+
+      # =========================
+      # FALCO — start BEFORE sandbox so it captures all runtime events
+      # =========================
+      - name: Start Falco
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        uses: falcosecurity/falco-actions/start@main
+        with:
+          mode: live
+          falco-version: "0.39.0"
+          verbose: true
+
+      - name: Debug Falco Status
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          echo "=== All running containers ==="
+          docker ps -a
+          echo "=== Falco container logs ==="
+          docker logs falco 2>/dev/null || echo "No falco container"
+          echo "=== /tmp contents ==="
+          ls -la /tmp/
+          echo "=== Falco config ==="
+          docker inspect falco 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0].get('Config',{}).get('Cmd',[])); print(d[0].get('HostConfig',{}).get('Binds',[]))" 2>/dev/null || echo "Cannot inspect"
+
+      # =========================
+      # SANDBOX — ALL PACKAGES
+      # =========================
+      - name: Build Sandbox Image
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        run: |
+          docker build -t ssc-sandbox -f sandbox/Dockerfile .
+
+      - name: Run Dynamic Analysis
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          docker run --rm --privileged \
+            -e VIRUSTOTAL_API_KEY="$VIRUSTOTAL_API_KEY" \
+            -v "${{ github.workspace }}:/app" \
+            ssc-sandbox \
+            python sandbox/runner.py "${{ steps.detect_pkg.outputs.package_path }}"
+
+          sudo chmod -R 777 decoy_logs/ || true
+          sudo chmod -R 777 CTI_Storage/ || true
+
+      # =========================
+      # FALCO — stop AFTER sandbox, then merge alerts into decoy log
+      # =========================
+      - name: Stop Falco
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          # Copy Falco events file before stopping the container
+          echo "=== Falco container status ==="
+          docker ps --filter name=falco || true
+
+          # Copy events file from container while it's still running
+          docker cp falco:/tmp/falco_events.json /tmp/falco_events.json 2>/dev/null \
+            && echo "Copied falco_events.json from container" \
+            || echo "Could not copy from container — file may be in /tmp already"
+
+          # Also try host /tmp directly (container mounts /tmp:/tmp)
+          ls -la /tmp/falco_events.json 2>/dev/null || echo "Not in host /tmp"
+
+          # Now stop the container
+          docker stop falco 2>/dev/null || true
+          docker rm falco 2>/dev/null || true
+          echo "Falco stopped"
+
+          # Verify file survived
+          ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
+
+      - name: Merge Falco Results into Decoy Log
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
+          PKG_STEM="${PKG_NAME%.tgz}"
+          PKG_STEM="${PKG_STEM%.tar.gz}"
+
+          sudo chmod -R 777 decoy_logs/ || true
+
+          # Check where Falco actually wrote its output
+          echo "=== Falco container logs ==="
+          docker logs falco 2>/dev/null | tail -20 || echo "Falco container not running"
+          echo "=== Searching for falco output files ==="
+          find /tmp -name "falco*" 2>/dev/null || echo "No falco files in /tmp"
+          find /var/log -name "falco*" 2>/dev/null || echo "No falco files in /var/log"
+          # falco-actions may write to a different location
+          ls -la /tmp/falco_events.json 2>/dev/null || echo "/tmp/falco_events.json not found"
+
+          FALCO_EVENTS="/tmp/falco_events.json"
+
+          # runner.py writes a pointer file: decoy_logs/ptr_{pkg_name}.txt
+          # containing the exact path to this package's decoy log
+          PTR_FILE="decoy_logs/ptr_${PKG_NAME}.txt"
+          if [ -f "$PTR_FILE" ]; then
+            DECOY_LOG=$(cat "$PTR_FILE")
+            echo "Found pointer file: $PTR_FILE → $DECOY_LOG"
+          else
+            echo "No pointer file found at $PTR_FILE"
+            ls decoy_logs/ptr_* 2>/dev/null || echo "No pointer files"
+            DECOY_LOG=""
+          fi
+
+          echo "Falco events: $FALCO_EVENTS (exists: $([ -f "$FALCO_EVENTS" ] && echo yes || echo no))"
+          echo "Decoy log: $DECOY_LOG (exists: $([ -f "$DECOY_LOG" ] && echo yes || echo no))"
+          ls /tmp/falco* 2>/dev/null || echo "No falco files in /tmp"
+
+          if [ -f "$FALCO_EVENTS" ] && [ -n "$DECOY_LOG" ] && [ -f "$DECOY_LOG" ]; then
+            python3 scripts/merge_falco.py "$FALCO_EVENTS" "$DECOY_LOG"
+            echo "Falco alerts merged into decoy log"
+          elif [ -f "$FALCO_EVENTS" ]; then
+            cp "$FALCO_EVENTS" "decoy_logs/falco_${PKG_STEM}.json"
+            echo "Saved Falco events to separate file (no decoy log found)"
+          else
+            echo "No Falco events file produced"
+          fi
+          sudo chmod -R 777 decoy_logs/ || true
+
+      # =========================
+      # ML GATE + YARA + SEMGREP — ALL PACKAGES
+      # =========================
+      - name: ML Security Gate
+        id: ml_scan
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          RESULT=0
+          python -m scripts.run_analysis "${{ steps.detect_pkg.outputs.package_path }}" || RESULT=$?
+          echo "ML_EXIT_CODE=$RESULT"
+          echo "ml_result=$RESULT" >> $GITHUB_OUTPUT
+
+      # =========================
+      # CTI FEATURE EXTRACTION
+      # =========================
+      - name: Extract Decoy CTI Features
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          sudo chmod -R 777 decoy_logs/ || true
+          sudo chmod -R 777 CTI_Storage/ || true
+          python scripts/extract_decoy_features.py || echo "extract_decoy_features.py not found - skipping"
+
+      - name: Upload Decoy Features
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: decoy-features-${{ github.run_number }}
+          path: CTI_Storage/decoy_features.csv
+          if-no-files-found: ignore
+
+      # =========================
+      # RELEASE LOGIC — ML DECIDES
+      # =========================
+      - name: Release Package
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        run: |
+          if [ "${{ steps.ml_scan.outputs.ml_result }}" = "0" ]; then
+            echo "ML says CLEAN → releasing"
+            mkdir -p packages/releases
+            mv "${{ steps.detect_pkg.outputs.package_path }}" \
+              "packages/releases/${{ steps.detect_pkg.outputs.package_name }}" || true
+          else
+            echo "ML says MALICIOUS → blocking"
+            mkdir -p packages/blocked
+            mv "${{ steps.detect_pkg.outputs.package_path }}" \
+              "packages/blocked/${{ steps.detect_pkg.outputs.package_name }}" 2>/dev/null || true
+          fi
+
+      # =========================
+      # MERGE CTI DATASET
+      # =========================
+      - name: Merge CTI Dataset
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          sudo chmod -R 777 decoy_logs/ || true
+          sudo chmod -R 777 CTI_Storage/ || true
+          python cti_merger/cti_merger.py || echo "cti_merger.py not found - skipping"
+
+      # =========================
+      # COMMIT — with conflict handling
+      # =========================
+      - name: Commit Results
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add packages/ || true
+          git add decoy_logs/ || true
+          git add CTI_Storage/ || true
+
+          git commit -m "SSC pipeline result (run ${{ github.run_number }})" || echo "Nothing to commit"
+
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && break || {
+              echo "Rebase conflict on attempt $i — resolving..."
+              git checkout --theirs CTI_Storage/enriched_cti_dataset.csv 2>/dev/null || true
+              git checkout --theirs CTI_Storage/processed_runs.json 2>/dev/null || true
+              git checkout --theirs decoy_logs/latest.json 2>/dev/null || true
+              git add CTI_Storage/ decoy_logs/ || true
+              git rebase --continue 2>/dev/null || git rebase --skip || true
+              sleep 3
+            }
+          done
+
+          git push origin main || git push --force-with-lease origin main
