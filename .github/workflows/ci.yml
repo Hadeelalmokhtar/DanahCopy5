@@ -100,32 +100,43 @@ jobs:
       - name: Start Falco
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
-        uses: falcosecurity/falco-actions/start@main
-        with:
-          mode: live
-          falco-version: "0.39.0"
-          verbose: true
-          falco-extra-params: "--o engine.kind=ebpf"
+        run: |
+          docker run --rm -d \
+            --name falco \
+            --privileged \
+            -v /tmp:/tmp \
+            -v /var/run/docker.sock:/host/var/run/docker.sock \
+            -v /proc:/host/proc:ro \
+            -v /etc:/host/etc:ro \
+            falcosecurity/falco-no-driver:0.39.0 \
+            falco \
+            -o json_output=true \
+            -o file_output.enabled=true \
+            -o file_output.keep_alive=false \
+            -o file_output.filename=/tmp/falco_events.json \
+            -o engine.kind=ebpf
+          echo "Falco container started"
     
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
+        continue-on-error: true        # ← this was missing before
         run: |
-          for i in $(seq 1 30); do
-            LOG=$(docker logs falco 2>&1)
-            if echo "$LOG" | grep -q "Events detected\|Starting rule"; then
-              echo "Falco eBPF probe loaded after ${i}s "
-              break
-            fi
+          for i in $(seq 1 20); do
             if ! docker ps --filter name=falco --filter status=running | grep -q falco; then
-              echo "Falco container exited early "
-              docker logs falco 2>&1
-              break
+              echo "Falco container exited ❌ — crash logs:"
+              docker logs falco 2>&1 || true
+              exit 0   # don't fail the step, let pipeline continue
             fi
-            echo "  waiting... ($i/30)"
+            LOG=$(docker logs falco 2>&1 || true)
+            if echo "$LOG" | grep -q "Events detected\|Starting rule\|loaded and ready"; then
+              echo "Falco ready after $((i*2))s ✅"
+              exit 0
+            fi
+            echo "  waiting... ($i/20)"
             sleep 2
           done
-
+          echo "Falco did not confirm ready in 40s — continuing anyway"
+    
       - name: Debug Falco Status
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
