@@ -115,11 +115,23 @@ jobs:
           sudo sed -i '/^file_output:/,/^[^ ]/ s/enabled: false/enabled: true/' /etc/falco/falco.yaml
           sudo sed -i '/^file_output:/,/^[^ ]/ s|filename:.*|filename: /tmp/falco_events.json|' /etc/falco/falco.yaml
 
+          echo "=== Verify config ===" 
+          grep -A8 "file_output:" /etc/falco/falco.yaml
+          
           sudo systemctl restart falco-modern-bpf.service
+          
+          # Give Falco up to 30s to fully initialize
+          for i in $(seq 1 30); do
+            if sudo journalctl -u falco-modern-bpf.service --no-pager -n 5 | grep -q "Events detected\|syscalls will be"; then
+              echo "Falco fully initialized ✅"
+              break
+            fi
+            sleep 1
+          done
+
           echo "Falco restarted with file output config"
           
-          # Verify config was applied
-          grep -A5 "file_output:" /etc/falco/falco.yaml
+         
              
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
