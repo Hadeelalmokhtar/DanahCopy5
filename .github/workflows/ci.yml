@@ -101,9 +101,16 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          # Configure output BEFORE installing so systemd service picks it up
-          sudo mkdir -p /etc/falco/config.d
-          sudo tee /etc/falco/config.d/output.yaml > /dev/null <<EOF
+          curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
+            sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+
+          echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main" | \
+            sudo tee /etc/apt/sources.list.d/falcosecurity.list
+
+          sudo apt-get update -qq
+          sudo apt-get install -y falco
+
+          sudo tee /etc/falco/config.d/output.yaml > /dev/null <<'EOF'
           json_output: true
           file_output:
             enabled: true
@@ -111,17 +118,10 @@ jobs:
             filename: /tmp/falco_events.json
           EOF
 
-          # Install Falco — systemd service starts automatically
-          curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
-            sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
-            https://download.falco.org/packages/deb stable main" | \
-            sudo tee /etc/apt/sources.list.d/falcosecurity.list
-          sudo apt-get update -qq
-          sudo apt-get install -y falco
-          echo "Falco installed and service started"
-    
-    
+          sudo systemctl restart falco-modern-bpf.service
+
+          echo "Falco restarted with file output config"
+             
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
@@ -143,19 +143,7 @@ jobs:
           echo "Falco did not produce events file in 40s — continuing anyway"
           sudo journalctl -u falco-modern-bpf.service --no-pager -n 10
     
-      - name: Debug Falco Status
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
-        run: |
-          echo "=== All running containers ==="
-          docker ps -a
-          echo "=== Falco container logs ==="
-          docker logs falco 2>/dev/null || echo "No falco container"
-          echo "=== /tmp contents ==="
-          ls -la /tmp/
-          echo "=== Falco config ==="
-          docker inspect falco 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0].get('Config',{}).get('Cmd',[])); print(d[0].get('HostConfig',{}).get('Binds',[]))" 2>/dev/null || echo "Cannot inspect"
-
+      
       # =========================
       # SANDBOX — ALL PACKAGES
       # =========================
@@ -200,8 +188,6 @@ jobs:
           sudo chmod -R 777 decoy_logs/ || true
 
           # Check where Falco actually wrote its output
-          echo "=== Falco container logs ==="
-          docker logs falco 2>/dev/null | tail -20 || echo "Falco container not running"
           echo "=== Searching for falco output files ==="
           find /tmp -name "falco*" 2>/dev/null || echo "No falco files in /tmp"
           find /var/log -name "falco*" 2>/dev/null || echo "No falco files in /var/log"
