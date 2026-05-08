@@ -108,13 +108,15 @@ jobs:
             -v /var/run/docker.sock:/host/var/run/docker.sock \
             -v /proc:/host/proc:ro \
             -v /etc:/host/etc:ro \
-            falcosecurity/falco-no-driver:0.39.0 \
+            -v /lib/modules:/lib/modules:ro \
+            -v /usr/src:/usr/src:ro \
+            falcosecurity/falco:0.39.0 \
             falco \
             -o json_output=true \
             -o file_output.enabled=true \
             -o file_output.keep_alive=false \
             -o file_output.filename=/tmp/falco_events.json \
-            -o engine.kind=ebpf
+            -o engine.kind=kmod
           echo "Falco container started"
     
       - name: Wait for Falco ready
