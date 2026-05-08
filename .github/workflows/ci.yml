@@ -140,24 +140,9 @@ jobs:
              
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
         run: |
-          for i in $(seq 1 20); do
-            if sudo test -f /tmp/falco_events.json; then
-              echo "Falco writing events after $((i*2))s ✅"
-              exit 0
-            fi
-            STATUS=$(sudo systemctl is-active falco-modern-bpf.service 2>/dev/null || echo "unknown")
-            if [ "$STATUS" = "failed" ]; then
-              echo "Falco service failed ❌"
-            sudo journalctl -u falco-modern-bpf.service --no-pager -n 20
-            exit 0
-            fi
-            echo "  waiting... ($i/20) — service: $STATUS"
-            sleep 2
-          done
-          echo "Falco did not produce events file in 40s — continuing anyway"
-          sudo journalctl -u falco-modern-bpf.service --no-pager -n 10
+          sleep 15
+
     
       
       # =========================
@@ -190,6 +175,13 @@ jobs:
         continue-on-error: true
         run: |
           sudo systemctl stop falco-modern-bpf.service || true
+
+          echo "=== Export Falco journal logs ==="
+
+          sudo journalctl -u falco-modern-bpf.service \
+            --no-pager \
+            -o short-iso > /tmp/falco_events.json || true
+
           ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
           
 
