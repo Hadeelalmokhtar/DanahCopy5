@@ -101,32 +101,36 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          docker run -d \
-            --name falco \
-            --privileged \
-            -e FALCO_DRIVER_TYPE=kmod \
-            -v /tmp:/tmp \
-            -v /var/run/docker.sock:/host/var/run/docker.sock \
-            -v /proc:/host/proc:ro \
-            -v /etc:/host/etc:ro \
-            -v /lib/modules:/lib/modules:ro \
-            -v /usr/src:/usr/src \
-            falcosecurity/falco:0.39.0 \
-          echo "Falco container started"
+           # Install Falco natively on the runner
+           curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
+             sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+           echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
+             https://download.falco.org/packages/deb stable main" | \
+             sudo tee /etc/apt/sources.list.d/falcosecurity.list
+           sudo apt-get update -qq
+           sudo apt-get install -y falco
+
+           # Start Falco with modern_ebpf (works natively, fails only in Docker)
+           sudo falco \
+             -o json_output=true \
+             -o file_output.enabled=true \
+             -o file_output.keep_alive=false \
+             -o file_output.filename=/tmp/falco_events.json \
+             -o engine.kind=modern_ebpf \
+             --daemon
+           echo "Falco started natively"
     
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true        # ← this was missing before
+        continue-on-error: true
         run: |
           for i in $(seq 1 20); do
-            if ! docker ps --filter name=falco --filter status=running | grep -q falco; then
-              echo "Falco container exited ❌ — crash logs:"
-              docker logs falco 2>&1 || true
-              exit 0   # don't fail the step, let pipeline continue
-            fi
-            LOG=$(docker logs falco 2>&1 || true)
-            if echo "$LOG" | grep -q "Events detected\|Starting rule\|loaded and ready"; then
+            if pgrep falco > /dev/null && [ -f /tmp/falco_events.json ]; then
               echo "Falco ready after $((i*2))s ✅"
+              exit 0
+            fi
+            if ! pgrep falco > /dev/null; then
+              echo "Falco process not running ❌"
               exit 0
             fi
             echo "  waiting... ($i/20)"
@@ -171,29 +175,14 @@ jobs:
       # =========================
       # FALCO — stop AFTER sandbox, then merge alerts into decoy log
       # =========================
+      
       - name: Stop Falco
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          # Copy Falco events file before stopping the container
-          echo "=== Falco container status ==="
-          docker ps --filter name=falco || true
-
-          # Copy events file from container while it's still running
-          docker cp falco:/tmp/falco_events.json /tmp/falco_events.json 2>/dev/null \
-            && echo "Copied falco_events.json from container" \
-            || echo "Could not copy from container — file may be in /tmp already"
-
-          # Also try host /tmp directly (container mounts /tmp:/tmp)
-          ls -la /tmp/falco_events.json 2>/dev/null || echo "Not in host /tmp"
-
-          # Now stop the container
-          docker stop falco 2>/dev/null || true
-          docker rm falco 2>/dev/null || true
-          echo "Falco stopped"
-
-          # Verify file survived
+          sudo pkill falco || true
           ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
+          
 
       - name: Merge Falco Results into Decoy Log
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
