@@ -101,42 +101,47 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-           # Install Falco natively on the runner
-           curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
-             sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
-           echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
-             https://download.falco.org/packages/deb stable main" | \
-             sudo tee /etc/apt/sources.list.d/falcosecurity.list
-           sudo apt-get update -qq
-           sudo apt-get install -y falco
+          # Configure output BEFORE installing so systemd service picks it up
+          sudo mkdir -p /etc/falco/config.d
+          sudo tee /etc/falco/config.d/output.yaml > /dev/null <<EOF
+          json_output: true
+          file_output:
+            enabled: true
+            keep_alive: false
+            filename: /tmp/falco_events.json
+          EOF
 
-           # Start Falco with modern_ebpf (works natively, fails only in Docker)
-           sudo falco \
-             -o json_output=true \
-             -o file_output.enabled=true \
-             -o file_output.keep_alive=false \
-             -o file_output.filename=/tmp/falco_events.json \
-             -o engine.kind=modern_ebpf \
-             --daemon
-           echo "Falco started natively"
+          # Install Falco — systemd service starts automatically
+          curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
+            sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
+            https://download.falco.org/packages/deb stable main" | \
+            sudo tee /etc/apt/sources.list.d/falcosecurity.list
+          sudo apt-get update -qq
+          sudo apt-get install -y falco
+          echo "Falco installed and service started"
+    
     
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
           for i in $(seq 1 20); do
-            if pgrep falco > /dev/null && [ -f /tmp/falco_events.json ]; then
-              echo "Falco ready after $((i*2))s ✅"
+            if [ -f /tmp/falco_events.json ]; then
+              echo "Falco writing events after $((i*2))s ✅"
               exit 0
             fi
-            if ! pgrep falco > /dev/null; then
-              echo "Falco process not running ❌"
-              exit 0
+            STATUS=$(sudo systemctl is-active falco-modern-bpf.service 2>/dev/null || echo "unknown")
+            if [ "$STATUS" = "failed" ]; then
+              echo "Falco service failed ❌"
+            sudo journalctl -u falco-modern-bpf.service --no-pager -n 20
+            exit 0
             fi
-            echo "  waiting... ($i/20)"
+            echo "  waiting... ($i/20) — service: $STATUS"
             sleep 2
           done
-          echo "Falco did not confirm ready in 40s — continuing anyway"
+          echo "Falco did not produce events file in 40s — continuing anyway"
+          sudo journalctl -u falco-modern-bpf.service --no-pager -n 10
     
       - name: Debug Falco Status
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
@@ -180,7 +185,7 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          sudo pkill falco || true
+          sudo systemctl stop falco-modern-bpf.service || true
           ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
           
 
