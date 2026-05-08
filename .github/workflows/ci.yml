@@ -101,7 +101,7 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          docker run --rm -d \
+          docker run -d \
             --name falco \
             --privileged \
             -v /tmp:/tmp \
