@@ -203,7 +203,16 @@ jobs:
           ls -la /tmp/falco_events.json 2>/dev/null || echo "/tmp/falco_events.json not found"
 
           FALCO_EVENTS="/tmp/falco_events.json"
+          
+          # Export Falco journal logs if file doesn't exist
+          if [ ! -f "$FALCO_EVENTS" ]; then
+            echo "Exporting Falco logs from journalctl..."
 
+            sudo journalctl -u falco-modern-bpf.service \
+              --no-pager \
+              -o cat > "$FALCO_EVENTS" || true
+          fi
+          
           # runner.py writes a pointer file: decoy_logs/ptr_{pkg_name}.txt
           # containing the exact path to this package's decoy log
           PTR_FILE="decoy_logs/ptr_${PKG_NAME}.txt"
