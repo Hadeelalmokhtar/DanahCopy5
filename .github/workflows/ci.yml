@@ -265,14 +265,6 @@ jobs:
           sudo chmod -R 777 CTI_Storage/ || true
           python scripts/extract_decoy_features.py || echo "extract_decoy_features.py not found - skipping"
 
-      - name: Upload Decoy Features
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        uses: actions/upload-artifact@v4
-        with:
-          name: decoy-features-${{ github.run_number }}
-          path: CTI_Storage/decoy_features.csv
-          if-no-files-found: ignore
-
       # =========================
       # RELEASE LOGIC — ML DECIDES
       # =========================
