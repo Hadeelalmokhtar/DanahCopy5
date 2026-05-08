@@ -110,17 +110,16 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y falco
 
-          sudo tee /etc/falco/config.d/output.yaml > /dev/null <<'EOF'
-          json_output: true
-          file_output:
-            enabled: true
-            keep_alive: false
-            filename: /tmp/falco_events.json
-          EOF
+          # Patch the main config directly — config.d override doesn't work reliably
+          sudo sed -i 's/^json_output: false/json_output: true/' /etc/falco/falco.yaml
+          sudo sed -i '/^file_output:/,/^[^ ]/ s/enabled: false/enabled: true/' /etc/falco/falco.yaml
+          sudo sed -i '/^file_output:/,/^[^ ]/ s|filename:.*|filename: /tmp/falco_events.json|' /etc/falco/falco.yaml
 
           sudo systemctl restart falco-modern-bpf.service
-
           echo "Falco restarted with file output config"
+          
+          # Verify config was applied
+          grep -A5 "file_output:" /etc/falco/falco.yaml
              
       - name: Wait for Falco ready
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
