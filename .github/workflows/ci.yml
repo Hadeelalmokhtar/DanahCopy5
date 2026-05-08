@@ -105,6 +105,26 @@ jobs:
           mode: live
           falco-version: "0.39.0"
           verbose: true
+          falco-extra-params: "--o engine.kind=ebpf"
+    
+      - name: Wait for Falco ready
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          for i in $(seq 1 30); do
+            LOG=$(docker logs falco 2>&1)
+            if echo "$LOG" | grep -q "Events detected\|Starting rule"; then
+              echo "Falco eBPF probe loaded after ${i}s "
+              break
+            fi
+            if ! docker ps --filter name=falco --filter status=running | grep -q falco; then
+              echo "Falco container exited early "
+              docker logs falco 2>&1
+              break
+            fi
+            echo "  waiting... ($i/30)"
+            sleep 2
+          done
 
       - name: Debug Falco Status
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
