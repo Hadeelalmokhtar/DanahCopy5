@@ -44,16 +44,28 @@ def parse_falco_alerts(falco_path: str) -> list:
                 # journalctl -o json — alert text is inside "MESSAGE" field
                 elif "MESSAGE" in obj:
                     msg = obj["MESSAGE"]
-                    if not msg:         
+                    if not msg:
                         continue
-                    # Skip non-alert journal lines
-                    if not any(kw in msg for kw in ["rule=", "Notice", "Warning", "Error"]):
-                        continue
-                    rule_match = re.search(r'rule=([^\s,]+)', msg)
+
+                 # MESSAGE contains another JSON string — unwrap it to get rule and output
+                 try:
+                    inner = json.loads(msg)
                     alerts.append({
-                        "rule":   rule_match.group(1) if rule_match else "",
-                        "output": msg,
+                        "rule":   inner.get("rule", ""),
+                        "output": inner.get("output", msg),
                     })
+        continue
+    except Exception:
+        pass
+
+    # Fallback — treat raw MESSAGE as output
+    if not any(kw in msg for kw in ["rule=", "Notice", "Warning", "Error"]):
+        continue
+    rule_match = re.search(r'rule=([^\s,]+)', msg)
+    alerts.append({
+        "rule":   rule_match.group(1) if rule_match else "",
+        "output": msg,
+    })
 
     except Exception as e:
         print(f"[merge_falco] Could not parse {falco_path}: {e}")
