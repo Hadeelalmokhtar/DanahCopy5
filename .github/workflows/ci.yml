@@ -119,11 +119,6 @@ jobs:
           grep -A8 "file_output:" /etc/falco/falco.yaml
           
           sudo systemctl restart falco-modern-bpf.service
-
-          # Trigger events so Falco creates the output file
-          touch /tmp/falco_test_event
-          cat /etc/passwd > /dev/null
-          sleep 5
           
           # Give Falco up to 30s to fully initialize
           for i in $(seq 1 30); do
@@ -136,12 +131,6 @@ jobs:
 
           echo "Falco restarted with file output config"
           
-         
-             
-      - name: Wait for Falco ready
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        run: |
-          sleep 15
 
     
       
