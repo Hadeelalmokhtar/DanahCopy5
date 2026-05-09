@@ -90,7 +90,7 @@ def extract_falco_features(alerts: list) -> dict:
         combined = rule + " " + output
 
         if any(kw in combined for kw in [
-            "privilege", "setuid", "chmod 777", "escalat", "sudo", "cap_sys"
+            "privilege", "setuid", "chmod 777", "escalat", "sudo", "cap_sys", "drop and execute"
         ]):
             features["falco_privilege_escalation"] = "True"
 
