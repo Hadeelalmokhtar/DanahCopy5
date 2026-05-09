@@ -79,6 +79,7 @@ CTI_COLUMNS = [
     "falco_write_binary_dir",
     "falco_ptrace_detected",
     "falco_package_install_runtime",
+    "falco_shell_spawned",
     # ── Static — YARA ──
     "yara_credential_theft_indicators",
     "yara_exfiltration_indicators",
@@ -112,6 +113,7 @@ DEFAULTS = {
     "falco_write_binary_dir":             "False",
     "falco_ptrace_detected":              "False",
     "falco_package_install_runtime":      "False",
+    "falco_shell_spawned":                "False",
     "yara_credential_theft_indicators":   "False",
     "yara_exfiltration_indicators":       "False",
     "yara_shell_execution_indicators":    "False",
@@ -374,6 +376,7 @@ def extract_cti(ml_log, behavioral_log):
         row["falco_write_binary_dir"]        = _str_bool(dynamic.get("falco_write_binary_dir",        "False"))
         row["falco_ptrace_detected"]         = _str_bool(dynamic.get("falco_ptrace_detected",         "False"))
         row["falco_package_install_runtime"] = _str_bool(dynamic.get("falco_package_install_runtime", "False"))
+        row["falco_shell_spawned"] = _str_bool(dynamic.get("falco_shell_spawned", "False"))
 
         # NOTE: YARA and Semgrep already set from ml_log["static_analysis"] above
 
