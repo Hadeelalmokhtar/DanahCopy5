@@ -1,0 +1,2250 @@
+{
+  "package": "artifact-lifecycle-agent-1.1.3.tgz",
+  "verdict": "MALICIOUS",
+  "score": 15,
+  "run_timestamp": "2026-05-09T02:43:37Z",
+  "behavior_findings": [
+    {
+      "label": "activity_outside_working_hours",
+      "tier": "high",
+      "weight": 5,
+      "evidence": "Activity at 5:00 Riyadh time"
+    },
+    {
+      "label": "http_data_exfiltration",
+      "tier": "high",
+      "weight": 10,
+      "evidence": "Large POST to /api/update"
+    }
+  ],
+  "behavioral_phases": {
+    "reconnaissance": [],
+    "defense_evasion": [
+      {
+        "time": 1778294616.148875,
+        "event": "readlinkat(AT_FDCWD, \"/proc/self/exe\", \"/usr/bin/node\", 4096) = 13"
+      }
+    ],
+    "credential_access": [],
+    "exfiltration": [],
+    "execution": [
+      {
+        "time": 1778294616.14803,
+        "event": "execve(\"/usr/bin/node\", [\"node\", \"/tmp/tmp9khxek44/package/index.j\"...], 0x7ffd21833848 /* 12 vars */) = 0"
+      }
+    ],
+    "persistence": [],
+    "discovery": []
+  },
+  "static_analysis": {
+    "index.js": {
+      "entropy": 5.208,
+      "has_obfuscation": false,
+      "static_domains": [
+        "hyper-cr4te.1dorelax.surf"
+      ]
+    }
+  },
+  "package_metadata": {},
+  "honeytoken_hits": [],
+  "network_analysis": {
+    "real_domains": [
+      "hyper-cr4te.1dorelax.surf"
+    ],
+    "junk_domains": [
+      "libc.so",
+      "libz.so",
+      "libcrypto.so",
+      "libzstd.so",
+      "ld.so.preload",
+      "libm.so",
+      "openssl.cnf",
+      "libicudata.so",
+      "ld.so.cache",
+      "libuv.so",
+      "libbrotlienc.so",
+      "libnghttp2.so",
+      "zoneinfo64.res",
+      "libicuuc.so",
+      "libnode.so",
+      "s.so",
+      "libbrotlicommon.so",
+      "libssl.so",
+      "libicui18n.so",
+      "libcares.so",
+      "libbrotlidec.so"
+    ],
+    "enriched_ips": [],
+    "external_ips": [],
+    "dns_summary": {
+      "hyper-cr4te.1dorelax.surf": 1
+    },
+    "total_unique_ips": 0,
+    "total_dns_queries": 1,
+    "total_http_requests": 1
+  },
+  "dns": [
+    {
+      "query": "hyper-cr4te.1dorelax.surf.",
+      "timestamp": 1778294616.39
+    }
+  ],
+  "http_requests": [
+    {
+      "method": "POST",
+      "path": "/api/update",
+      "body_text": "{\"package\":\"artifact-lifecycle-agent\",\"mode\":\"aggressive_post_shell\",\"simulated_domain\":\"hyper-cr4te.1dorelax.surf\",\"sample\":\"synthetic-training-fixture\",\"payload\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "content_type": "application/json",
+      "user_agent": "npm-synthetic-fixture/1.0",
+      "analysis": {
+        "payload_size": 1567,
+        "large_exfil_attempt": true
+      }
+    }
+  ],
+  "processes": [
+    "index.js",
+    "node"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": 1,
+        "label": "Package",
+        "type": "root"
+      },
+      {
+        "id": 2,
+        "label": "index.js",
+        "type": "process"
+      },
+      {
+        "id": 3,
+        "label": "node",
+        "type": "process"
+      },
+      {
+        "id": 4,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 5,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 6,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 7,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 8,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 9,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 10,
+        "label": "ld.so.cache",
+        "type": "file"
+      },
+      {
+        "id": 11,
+        "label": "libnode.so.115",
+        "type": "file"
+      },
+      {
+        "id": 12,
+        "label": "libc.so.6",
+        "type": "file"
+      },
+      {
+        "id": 13,
+        "label": "libc.so.6",
+        "type": "file"
+      },
+      {
+        "id": 14,
+        "label": "libc.so.6",
+        "type": "file"
+      },
+      {
+        "id": 15,
+        "label": "libz.so.1",
+        "type": "file"
+      },
+      {
+        "id": 16,
+        "label": "libuv.so.1",
+        "type": "file"
+      },
+      {
+        "id": 17,
+        "label": "libbrotlidec.so.1",
+        "type": "file"
+      },
+      {
+        "id": 18,
+        "label": "libbrotlienc.so.1",
+        "type": "file"
+      },
+      {
+        "id": 19,
+        "label": "libcares.so.2",
+        "type": "file"
+      },
+      {
+        "id": 20,
+        "label": "libnghttp2.so.14",
+        "type": "file"
+      },
+      {
+        "id": 21,
+        "label": "libcrypto.so.3",
+        "type": "file"
+      },
+      {
+        "id": 22,
+        "label": "libssl.so.3",
+        "type": "file"
+      },
+      {
+        "id": 23,
+        "label": "libicui18n.so.76",
+        "type": "file"
+      },
+      {
+        "id": 24,
+        "label": "hyper-cr4te.1dorelax.surf",
+        "type": "domain"
+      }
+    ],
+    "edges": [
+      {
+        "from": 1,
+        "to": 2
+      },
+      {
+        "from": 1,
+        "to": 3
+      },
+      {
+        "from": 2,
+        "to": 4
+      },
+      {
+        "from": 2,
+        "to": 5
+      },
+      {
+        "from": 2,
+        "to": 6
+      },
+      {
+        "from": 2,
+        "to": 7
+      },
+      {
+        "from": 2,
+        "to": 8
+      },
+      {
+        "from": 2,
+        "to": 9
+      },
+      {
+        "from": 2,
+        "to": 10
+      },
+      {
+        "from": 2,
+        "to": 11
+      },
+      {
+        "from": 2,
+        "to": 12
+      },
+      {
+        "from": 2,
+        "to": 13
+      },
+      {
+        "from": 2,
+        "to": 14
+      },
+      {
+        "from": 2,
+        "to": 15
+      },
+      {
+        "from": 2,
+        "to": 16
+      },
+      {
+        "from": 2,
+        "to": 17
+      },
+      {
+        "from": 2,
+        "to": 18
+      },
+      {
+        "from": 2,
+        "to": 19
+      },
+      {
+        "from": 2,
+        "to": 20
+      },
+      {
+        "from": 2,
+        "to": 21
+      },
+      {
+        "from": 2,
+        "to": 22
+      },
+      {
+        "from": 2,
+        "to": 23
+      },
+      {
+        "from": 2,
+        "to": 24
+      }
+    ]
+  },
+  "accessed_files": [
+    "/usr/bin/../lib/glibc-hwcaps/x86-64-v3/libnode.so.115",
+    "/usr/bin/glibc-hwcaps/x86-64-v2/libnode.so.115",
+    "/usr/bin/glibc-hwcaps/x86-64-v3/libnode.so.115",
+    "/usr/bin/libnode.so.115",
+    "/lib/x86_64-linux-gnu/libssl.so.3",
+    "/proc/version_signature",
+    "/lib/x86_64-linux-gnu/libbrotlidec.so.1",
+    "/lib/x86_64-linux-gnu/libbrotlicommon.so.1",
+    "/lib/x86_64-linux-gnu/libnode.so.115",
+    "/lib/x86_64-linux-gnu/libcrypto.so.3",
+    "/lib/x86_64-linux-gnu/libicuuc.so.76",
+    "/lib/x86_64-linux-gnu/libm.so.6",
+    "/usr/bin/../lib/libc.so.6",
+    "/lib/x86_64-linux-gnu/libuv.so.1",
+    "/lib/x86_64-linux-gnu/libcares.so.2",
+    "/usr/lib/ssl/openssl.cnf",
+    "/lib/x86_64-linux-gnu/libc.so.6",
+    "/lib/x86_64-linux-gnu/libicui18n.so.76",
+    "/lib/x86_64-linux-gnu/libnghttp2.so.14",
+    "/usr/bin/../lib/glibc-hwcaps/x86-64-v2/libnode.so.115",
+    "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "/etc/ld.so.cache",
+    "/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "/lib/x86_64-linux-gnu/libicudata.so.76",
+    "/usr/bin/../lib/libnode.so.115",
+    "/lib/x86_64-linux-gnu/libz.so.1",
+    "/usr/bin/libc.so.6",
+    "/lib/x86_64-linux-gnu/libbrotlienc.so.1",
+    "/lib/x86_64-linux-gnu/libzstd.so.1"
+  ],
+  "decoded_payloads": [],
+  "memory_strings": [],
+  "timeline": [
+    {
+      "time": 1778294616.14803,
+      "event": "execve(\"/usr/bin/node\", [\"node\", \"/tmp/tmp9khxek44/package/index.j\"...], 0x7ffd21833848 /* 12 vars */) = 0"
+    },
+    {
+      "time": 1778294616.148602,
+      "event": "brk(NULL)             = 0x55e9030d8000"
+    },
+    {
+      "time": 1778294616.14875,
+      "event": "mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febb3940000"
+    },
+    {
+      "time": 1778294616.148875,
+      "event": "readlinkat(AT_FDCWD, \"/proc/self/exe\", \"/usr/bin/node\", 4096) = 13"
+    },
+    {
+      "time": 1778294616.148956,
+      "event": "access(\"/etc/ld.so.preload\", R_OK) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149007,
+      "event": "openat(AT_FDCWD, \"/usr/bin/../lib/glibc-hwcaps/x86-64-v3/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149068,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/../lib/glibc-hwcaps/x86-64-v3/\", 0x7ffd6f045c70, 0) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.14912,
+      "event": "openat(AT_FDCWD, \"/usr/bin/../lib/glibc-hwcaps/x86-64-v2/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149168,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/../lib/glibc-hwcaps/x86-64-v2/\", 0x7ffd6f045c70, 0) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149211,
+      "event": "openat(AT_FDCWD, \"/usr/bin/../lib/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149273,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/../lib/\", {st_mode=S_IFDIR|0755, st_size=4096, ...}, 0) = 0"
+    },
+    {
+      "time": 1778294616.149323,
+      "event": "openat(AT_FDCWD, \"/usr/bin/glibc-hwcaps/x86-64-v3/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149394,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/glibc-hwcaps/x86-64-v3/\", 0x7ffd6f045c70, 0) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.14944,
+      "event": "openat(AT_FDCWD, \"/usr/bin/glibc-hwcaps/x86-64-v2/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149486,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/glibc-hwcaps/x86-64-v2/\", 0x7ffd6f045c70, 0) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149527,
+      "event": "openat(AT_FDCWD, \"/usr/bin/libnode.so.115\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.149667,
+      "event": "newfstatat(AT_FDCWD, \"/usr/bin/\", {st_mode=S_IFDIR|0755, st_size=20480, ...}, 0) = 0"
+    },
+    {
+      "time": 1778294616.149752,
+      "event": "openat(AT_FDCWD, \"/etc/ld.so.cache\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.149833,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=25079, ...}) = 0"
+    },
+    {
+      "time": 1778294616.149909,
+      "event": "mmap(NULL, 25079, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7febb3939000"
+    },
+    {
+      "time": 1778294616.149984,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.15006,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libnode.so.115\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.150153,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\3\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.150229,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=55158632, ...}) = 0"
+    },
+    {
+      "time": 1778294616.150303,
+      "event": "mmap(NULL, 55308408, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb0479000"
+    },
+    {
+      "time": 1778294616.150379,
+      "event": "mmap(0x7febb0e2b000, 34992128, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x9b2000) = 0x7febb0e2b000"
+    },
+    {
+      "time": 1778294616.15046,
+      "event": "mmap(0x7febb2f8a000, 9043968, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2b11000) = 0x7febb2f8a000"
+    },
+    {
+      "time": 1778294616.15054,
+      "event": "mmap(0x7febb382a000, 954368, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x33b1000) = 0x7febb382a000"
+    },
+    {
+      "time": 1778294616.150674,
+      "event": "mmap(0x7febb3913000, 151672, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febb3913000"
+    },
+    {
+      "time": 1778294616.150765,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.150845,
+      "event": "openat(AT_FDCWD, \"/usr/bin/../lib/libc.so.6\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.150942,
+      "event": "openat(AT_FDCWD, \"/usr/bin/libc.so.6\", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.151044,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libc.so.6\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.151128,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\3\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0p\\236\\2\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.151204,
+      "event": "pread64(3, \"\\6\\0\\0\\0\\4\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0\"..., 840, 64) = 840"
+    },
+    {
+      "time": 1778294616.151278,
+      "event": "fstat(3, {st_mode=S_IFREG|0755, st_size=1995216, ...}) = 0"
+    },
+    {
+      "time": 1778294616.151357,
+      "event": "pread64(3, \"\\6\\0\\0\\0\\4\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0@\\0\\0\\0\\0\\0\\0\\0\"..., 840, 64) = 840"
+    },
+    {
+      "time": 1778294616.151433,
+      "event": "mmap(NULL, 2047568, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb0285000"
+    },
+    {
+      "time": 1778294616.151512,
+      "event": "mmap(0x7febb02ad000, 1454080, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7febb02ad000"
+    },
+    {
+      "time": 1778294616.151623,
+      "event": "mmap(0x7febb0410000, 352256, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x18b000) = 0x7febb0410000"
+    },
+    {
+      "time": 1778294616.151705,
+      "event": "mmap(0x7febb0466000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1e0000) = 0x7febb0466000"
+    },
+    {
+      "time": 1778294616.151791,
+      "event": "mmap(0x7febb046c000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febb046c000"
+    },
+    {
+      "time": 1778294616.15188,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.151959,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libz.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.152048,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.152123,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=125376, ...}) = 0"
+    },
+    {
+      "time": 1778294616.152197,
+      "event": "mmap(NULL, 127376, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb0265000"
+    },
+    {
+      "time": 1778294616.152271,
+      "event": "mmap(0x7febb0268000, 81920, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7febb0268000"
+    },
+    {
+      "time": 1778294616.152354,
+      "event": "mmap(0x7febb027c000, 28672, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17000) = 0x7febb027c000"
+    },
+    {
+      "time": 1778294616.152432,
+      "event": "mmap(0x7febb0283000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1d000) = 0x7febb0283000"
+    },
+    {
+      "time": 1778294616.152524,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.152609,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libuv.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.15271,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.152787,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=213424, ...}) = 0"
+    },
+    {
+      "time": 1778294616.152863,
+      "event": "mmap(NULL, 217136, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb022f000"
+    },
+    {
+      "time": 1778294616.152937,
+      "event": "mmap(0x7febb0237000, 131072, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x8000) = 0x7febb0237000"
+    },
+    {
+      "time": 1778294616.153016,
+      "event": "mmap(0x7febb0257000, 45056, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7febb0257000"
+    },
+    {
+      "time": 1778294616.153093,
+      "event": "mmap(0x7febb0262000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x32000) = 0x7febb0262000"
+    },
+    {
+      "time": 1778294616.153178,
+      "event": "mmap(0x7febb0264000, 48, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febb0264000"
+    },
+    {
+      "time": 1778294616.153266,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.15334,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libbrotlidec.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.153437,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.153513,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=51376, ...}) = 0"
+    },
+    {
+      "time": 1778294616.15361,
+      "event": "mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febb022d000"
+    },
+    {
+      "time": 1778294616.153689,
+      "event": "mmap(NULL, 53368, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb021f000"
+    },
+    {
+      "time": 1778294616.15377,
+      "event": "mmap(0x7febb0220000, 32768, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7febb0220000"
+    },
+    {
+      "time": 1778294616.153851,
+      "event": "mmap(0x7febb0228000, 12288, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x9000) = 0x7febb0228000"
+    },
+    {
+      "time": 1778294616.153927,
+      "event": "mmap(0x7febb022b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xb000) = 0x7febb022b000"
+    },
+    {
+      "time": 1778294616.154018,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.154093,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libbrotlienc.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.154191,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.154267,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=670376, ...}) = 0"
+    },
+    {
+      "time": 1778294616.154345,
+      "event": "mmap(NULL, 672456, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb017a000"
+    },
+    {
+      "time": 1778294616.154423,
+      "event": "mmap(0x7febb017b000, 327680, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7febb017b000"
+    },
+    {
+      "time": 1778294616.154502,
+      "event": "mmap(0x7febb01cb000, 335872, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x51000) = 0x7febb01cb000"
+    },
+    {
+      "time": 1778294616.154606,
+      "event": "mmap(0x7febb021d000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xa2000) = 0x7febb021d000"
+    },
+    {
+      "time": 1778294616.154703,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.154778,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libcares.so.2\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.154875,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.154948,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=239552, ...}) = 0"
+    },
+    {
+      "time": 1778294616.155065,
+      "event": "mmap(NULL, 237608, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb013f000"
+    },
+    {
+      "time": 1778294616.155228,
+      "event": "mmap(0x7febb0147000, 155648, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x8000) = 0x7febb0147000"
+    },
+    {
+      "time": 1778294616.155345,
+      "event": "mmap(0x7febb016d000, 45056, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2e000) = 0x7febb016d000"
+    },
+    {
+      "time": 1778294616.155458,
+      "event": "mmap(0x7febb0178000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x39000) = 0x7febb0178000"
+    },
+    {
+      "time": 1778294616.155599,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.155707,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libnghttp2.so.14\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.155846,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.155942,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=199152, ...}) = 0"
+    },
+    {
+      "time": 1778294616.156053,
+      "event": "mmap(NULL, 201232, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febb010d000"
+    },
+    {
+      "time": 1778294616.15616,
+      "event": "mmap(0x7febb0113000, 98304, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x6000) = 0x7febb0113000"
+    },
+    {
+      "time": 1778294616.156244,
+      "event": "mmap(0x7febb012b000, 65536, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1e000) = 0x7febb012b000"
+    },
+    {
+      "time": 1778294616.156354,
+      "event": "mmap(0x7febb013b000, 16384, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2d000) = 0x7febb013b000"
+    },
+    {
+      "time": 1778294616.15645,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.156567,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libcrypto.so.3\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.156694,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.156795,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=6513216, ...}) = 0"
+    },
+    {
+      "time": 1778294616.156896,
+      "event": "mmap(NULL, 6523944, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febafad4000"
+    },
+    {
+      "time": 1778294616.157004,
+      "event": "mmap(0x7febafbcb000, 3678208, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xf7000) = 0x7febafbcb000"
+    },
+    {
+      "time": 1778294616.157084,
+      "event": "mmap(0x7febaff4d000, 1273856, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x479000) = 0x7febaff4d000"
+    },
+    {
+      "time": 1778294616.157182,
+      "event": "mmap(0x7febb0084000, 548864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x5b0000) = 0x7febb0084000"
+    },
+    {
+      "time": 1778294616.157299,
+      "event": "mmap(0x7febb010a000, 11304, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febb010a000"
+    },
+    {
+      "time": 1778294616.157417,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.157568,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libssl.so.3\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.157691,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.157799,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=1101760, ...}) = 0"
+    },
+    {
+      "time": 1778294616.15788,
+      "event": "mmap(NULL, 1103848, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf9c6000"
+    },
+    {
+      "time": 1778294616.157976,
+      "event": "mmap(0x7febaf9e9000, 692224, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x23000) = 0x7febaf9e9000"
+    },
+    {
+      "time": 1778294616.158096,
+      "event": "mmap(0x7febafa92000, 208896, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xcc000) = 0x7febafa92000"
+    },
+    {
+      "time": 1778294616.158195,
+      "event": "mmap(0x7febafac5000, 61440, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xfe000) = 0x7febafac5000"
+    },
+    {
+      "time": 1778294616.158329,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.158434,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libicui18n.so.76\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.158608,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.158706,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=3774800, ...}) = 0"
+    },
+    {
+      "time": 1778294616.158878,
+      "event": "mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febaf9c4000"
+    },
+    {
+      "time": 1778294616.158986,
+      "event": "mmap(NULL, 3781592, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf628000"
+    },
+    {
+      "time": 1778294616.159105,
+      "event": "mmap(0x7febaf735000, 1953792, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x10d000) = 0x7febaf735000"
+    },
+    {
+      "time": 1778294616.159239,
+      "event": "mmap(0x7febaf912000, 643072, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2ea000) = 0x7febaf912000"
+    },
+    {
+      "time": 1778294616.15935,
+      "event": "mmap(0x7febaf9af000, 81920, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x386000) = 0x7febaf9af000"
+    },
+    {
+      "time": 1778294616.159553,
+      "event": "mmap(0x7febaf9c3000, 984, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febaf9c3000"
+    },
+    {
+      "time": 1778294616.159692,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.159807,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libicuuc.so.76\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.159953,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.160102,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=2230288, ...}) = 0"
+    },
+    {
+      "time": 1778294616.160214,
+      "event": "mmap(NULL, 2237552, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf405000"
+    },
+    {
+      "time": 1778294616.160345,
+      "event": "mmap(0x7febaf472000, 1093632, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x6d000) = 0x7febaf472000"
+    },
+    {
+      "time": 1778294616.160481,
+      "event": "mmap(0x7febaf57d000, 610304, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x178000) = 0x7febaf57d000"
+    },
+    {
+      "time": 1778294616.160581,
+      "event": "mmap(0x7febaf612000, 81920, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x20d000) = 0x7febaf612000"
+    },
+    {
+      "time": 1778294616.160765,
+      "event": "mmap(0x7febaf626000, 5232, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febaf626000"
+    },
+    {
+      "time": 1778294616.160886,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.160977,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libstdc++.so.6\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.161089,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\3\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.161176,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=2497768, ...}) = 0"
+    },
+    {
+      "time": 1778294616.161263,
+      "event": "mmap(NULL, 2511040, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf19f000"
+    },
+    {
+      "time": 1778294616.161352,
+      "event": "mmap(0x7febaf23c000, 1216512, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x9d000) = 0x7febaf23c000"
+    },
+    {
+      "time": 1778294616.16144,
+      "event": "mmap(0x7febaf365000, 581632, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c6000) = 0x7febaf365000"
+    },
+    {
+      "time": 1778294616.161519,
+      "event": "mmap(0x7febaf3f3000, 57344, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x254000) = 0x7febaf3f3000"
+    },
+    {
+      "time": 1778294616.16164,
+      "event": "mmap(0x7febaf401000, 12480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7febaf401000"
+    },
+    {
+      "time": 1778294616.161741,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.161825,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libm.so.6\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.161915,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\3\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.161992,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=977112, ...}) = 0"
+    },
+    {
+      "time": 1778294616.162072,
+      "event": "mmap(NULL, 978968, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf0af000"
+    },
+    {
+      "time": 1778294616.162147,
+      "event": "mmap(0x7febaf0c0000, 512000, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x11000) = 0x7febaf0c0000"
+    },
+    {
+      "time": 1778294616.162241,
+      "event": "mmap(0x7febaf13d000, 393216, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x8e000) = 0x7febaf13d000"
+    },
+    {
+      "time": 1778294616.162329,
+      "event": "mmap(0x7febaf19d000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xed000) = 0x7febaf19d000"
+    },
+    {
+      "time": 1778294616.162425,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.162502,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libgcc_s.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.162627,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.162712,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=182856, ...}) = 0"
+    },
+    {
+      "time": 1778294616.162844,
+      "event": "mmap(NULL, 181160, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf082000"
+    },
+    {
+      "time": 1778294616.16295,
+      "event": "mmap(0x7febaf086000, 143360, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x4000) = 0x7febaf086000"
+    },
+    {
+      "time": 1778294616.163037,
+      "event": "mmap(0x7febaf0a9000, 16384, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x27000) = 0x7febaf0a9000"
+    },
+    {
+      "time": 1778294616.163117,
+      "event": "mmap(0x7febaf0ad000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2b000) = 0x7febaf0ad000"
+    },
+    {
+      "time": 1778294616.163218,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.163348,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libbrotlicommon.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.163622,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.163717,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=141496, ...}) = 0"
+    },
+    {
+      "time": 1778294616.163893,
+      "event": "mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febaf080000"
+    },
+    {
+      "time": 1778294616.164091,
+      "event": "mmap(NULL, 139320, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaf05d000"
+    },
+    {
+      "time": 1778294616.164206,
+      "event": "mmap(0x7febaf05e000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7febaf05e000"
+    },
+    {
+      "time": 1778294616.164385,
+      "event": "mmap(0x7febaf05f000, 126976, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7febaf05f000"
+    },
+    {
+      "time": 1778294616.164554,
+      "event": "mmap(0x7febaf07e000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x21000) = 0x7febaf07e000"
+    },
+    {
+      "time": 1778294616.164713,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.164824,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libzstd.so.1\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.16493,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.165017,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=825336, ...}) = 0"
+    },
+    {
+      "time": 1778294616.165103,
+      "event": "mmap(NULL, 823352, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febaef93000"
+    },
+    {
+      "time": 1778294616.165201,
+      "event": "mmap(0x7febaef98000, 716800, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x5000) = 0x7febaef98000"
+    },
+    {
+      "time": 1778294616.16529,
+      "event": "mmap(0x7febaf047000, 81920, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xb4000) = 0x7febaf047000"
+    },
+    {
+      "time": 1778294616.165373,
+      "event": "mmap(0x7febaf05b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xc8000) = 0x7febaf05b000"
+    },
+    {
+      "time": 1778294616.165471,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.16559,
+      "event": "openat(AT_FDCWD, \"/lib/x86_64-linux-gnu/libicudata.so.76\", O_RDONLY|O_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.165706,
+      "event": "read(3, \"\\177ELF\\2\\1\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\3\\0>\\0\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\"..., 832) = 832"
+    },
+    {
+      "time": 1778294616.165794,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=31864368, ...}) = 0"
+    },
+    {
+      "time": 1778294616.165889,
+      "event": "mmap(NULL, 31866896, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7febad12e000"
+    },
+    {
+      "time": 1778294616.165966,
+      "event": "mmap(0x7febad12f000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7febad12f000"
+    },
+    {
+      "time": 1778294616.16606,
+      "event": "mmap(0x7febad130000, 31854592, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7febad130000"
+    },
+    {
+      "time": 1778294616.166142,
+      "event": "mmap(0x7febaef91000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1e62000) = 0x7febaef91000"
+    },
+    {
+      "time": 1778294616.16624,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.16635,
+      "event": "mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad12c000"
+    },
+    {
+      "time": 1778294616.166455,
+      "event": "mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad129000"
+    },
+    {
+      "time": 1778294616.166539,
+      "event": "arch_prctl(ARCH_SET_FS, 0x7febad129880) = 0"
+    },
+    {
+      "time": 1778294616.166634,
+      "event": "set_tid_address(0x7febad129b50) = 13"
+    },
+    {
+      "time": 1778294616.166719,
+      "event": "set_robust_list(0x7febad129b60, 24) = 0"
+    },
+    {
+      "time": 1778294616.166823,
+      "event": "rseq(0x7febad1296a0, 0x20, 0, 0x53053053) = 0"
+    },
+    {
+      "time": 1778294616.166999,
+      "event": "mprotect(0x7febb0466000, 16384, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.167097,
+      "event": "mprotect(0x7febaef91000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.167262,
+      "event": "mprotect(0x7febaf05b000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.167358,
+      "event": "mprotect(0x7febaf07e000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.16745,
+      "event": "mprotect(0x7febaf0ad000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.167581,
+      "event": "mprotect(0x7febaf19d000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.168382,
+      "event": "mprotect(0x7febaf3f3000, 45056, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.168623,
+      "event": "mprotect(0x7febaf612000, 77824, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.169205,
+      "event": "mprotect(0x7febaf9af000, 77824, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.169327,
+      "event": "mprotect(0x7febb0283000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.171152,
+      "event": "mprotect(0x7febb0084000, 536576, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.171507,
+      "event": "mprotect(0x7febafac5000, 45056, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.17165,
+      "event": "mprotect(0x7febb013b000, 12288, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.171792,
+      "event": "mprotect(0x7febb0178000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.171873,
+      "event": "mprotect(0x7febb021d000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.171958,
+      "event": "mprotect(0x7febb022b000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.172045,
+      "event": "mprotect(0x7febb0262000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.174329,
+      "event": "mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad126000"
+    },
+    {
+      "time": 1778294616.174512,
+      "event": "mmap(NULL, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad121000"
+    },
+    {
+      "time": 1778294616.174732,
+      "event": "mmap(NULL, 36864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad118000"
+    },
+    {
+      "time": 1778294616.177158,
+      "event": "mmap(NULL, 69632, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad107000"
+    },
+    {
+      "time": 1778294616.178541,
+      "event": "mmap(NULL, 135168, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7febad0e6000"
+    },
+    {
+      "time": 1778294616.188372,
+      "event": "mprotect(0x7febb382a000, 851968, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.188516,
+      "event": "mprotect(0x55e8ee432000, 4096, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.188656,
+      "event": "mprotect(0x7febb397e000, 8192, PROT_READ) = 0"
+    },
+    {
+      "time": 1778294616.188778,
+      "event": "prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=16384*1024, rlim_max=RLIM64_INFINITY}) = 0"
+    },
+    {
+      "time": 1778294616.18891,
+      "event": "munmap(0x7febb3939000, 25079) = 0"
+    },
+    {
+      "time": 1778294616.189096,
+      "event": "futex(0x7febaf40173c, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.189271,
+      "event": "getrandom(\"\\xa6\\x3a\\x03\\xaf\\xd9\\x05\\x00\\x05\", 8, GRND_NONBLOCK) = 8"
+    },
+    {
+      "time": 1778294616.189356,
+      "event": "brk(NULL)             = 0x55e9030d8000"
+    },
+    {
+      "time": 1778294616.189431,
+      "event": "brk(0x55e9030f9000)   = 0x55e9030f9000"
+    },
+    {
+      "time": 1778294616.189784,
+      "event": "brk(0x55e90311a000)   = 0x55e90311a000"
+    },
+    {
+      "time": 1778294616.190023,
+      "event": "futex(0x7febb0263f58, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.190183,
+      "event": "brk(0x55e90313b000)   = 0x55e90313b000"
+    },
+    {
+      "time": 1778294616.190332,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.190408,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.190498,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.190591,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.190663,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.190733,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.190825,
+      "event": "fstat(0, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.190905,
+      "event": "fstat(1, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.190982,
+      "event": "fstat(2, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.191059,
+      "event": "rt_sigprocmask(SIG_SETMASK, [USR1], NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.191144,
+      "event": "rt_sigaction(SIGHUP, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191223,
+      "event": "rt_sigaction(SIGINT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191299,
+      "event": "rt_sigaction(SIGQUIT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191376,
+      "event": "rt_sigaction(SIGILL, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191451,
+      "event": "rt_sigaction(SIGTRAP, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191527,
+      "event": "rt_sigprocmask(SIG_BLOCK, ~[], [USR1], 8) = 0"
+    },
+    {
+      "time": 1778294616.191628,
+      "event": "rt_sigaction(SIGABRT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191705,
+      "event": "rt_sigprocmask(SIG_SETMASK, [USR1], NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.191782,
+      "event": "rt_sigaction(SIGBUS, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191858,
+      "event": "rt_sigaction(SIGFPE, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.191933,
+      "event": "rt_sigaction(SIGUSR1, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192008,
+      "event": "rt_sigaction(SIGSEGV, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192084,
+      "event": "rt_sigaction(SIGUSR2, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.19216,
+      "event": "rt_sigaction(SIGPIPE, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7febb02c4df0}, NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.192236,
+      "event": "rt_sigaction(SIGALRM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192311,
+      "event": "rt_sigaction(SIGTERM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192386,
+      "event": "rt_sigaction(SIGSTKFLT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192463,
+      "event": "rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192539,
+      "event": "rt_sigaction(SIGCONT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192625,
+      "event": "rt_sigaction(SIGTSTP, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192701,
+      "event": "rt_sigaction(SIGTTIN, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192776,
+      "event": "rt_sigaction(SIGTTOU, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192851,
+      "event": "rt_sigaction(SIGURG, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.192927,
+      "event": "rt_sigaction(SIGXCPU, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193002,
+      "event": "rt_sigaction(SIGXFSZ, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7febb02c4df0}, NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.193077,
+      "event": "rt_sigaction(SIGVTALRM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193153,
+      "event": "rt_sigaction(SIGPROF, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193228,
+      "event": "rt_sigaction(SIGWINCH, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193304,
+      "event": "rt_sigaction(SIGIO, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193379,
+      "event": "rt_sigaction(SIGPWR, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193456,
+      "event": "rt_sigaction(SIGSYS, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0"
+    },
+    {
+      "time": 1778294616.193531,
+      "event": "fcntl(0, F_GETFL)     = 0 (flags O_RDONLY)"
+    },
+    {
+      "time": 1778294616.19362,
+      "event": "ioctl(0, TCGETS, 0x7ffd6f046640) = -1 ENOTTY (Inappropriate ioctl for device)"
+    },
+    {
+      "time": 1778294616.193788,
+      "event": "fstat(0, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.193878,
+      "event": "fcntl(1, F_GETFL)     = 0x1 (flags O_WRONLY)"
+    },
+    {
+      "time": 1778294616.193955,
+      "event": "ioctl(1, TCGETS, 0x7ffd6f046640) = -1 ENOTTY (Inappropriate ioctl for device)"
+    },
+    {
+      "time": 1778294616.194046,
+      "event": "fstat(1, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.194125,
+      "event": "fcntl(2, F_GETFL)     = 0x1 (flags O_WRONLY)"
+    },
+    {
+      "time": 1778294616.194197,
+      "event": "ioctl(2, TCGETS, 0x7ffd6f046640) = -1 ENOTTY (Inappropriate ioctl for device)"
+    },
+    {
+      "time": 1778294616.194279,
+      "event": "fstat(2, {st_mode=S_IFIFO|0600, st_size=0, ...}) = 0"
+    },
+    {
+      "time": 1778294616.194357,
+      "event": "rt_sigaction(SIGINT, {sa_handler=0x7febb0f96a60, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESETHAND|0xffffffff00000000, sa_restorer=0x7febb02c4df0}, NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.194436,
+      "event": "rt_sigaction(SIGTERM, {sa_handler=0x7febb0f96a60, sa_mask=~[RTMIN RT_1], sa_flags=SA_RESTORER|SA_RESETHAND|0xffffffff00000000, sa_restorer=0x7febb02c4df0}, NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.194516,
+      "event": "prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=64*1024, rlim_max=64*1024}) = 0"
+    },
+    {
+      "time": 1778294616.194689,
+      "event": "fcntl(0, F_SETFD, FD_CLOEXEC) = 0"
+    },
+    {
+      "time": 1778294616.194764,
+      "event": "fcntl(1, F_SETFD, FD_CLOEXEC) = 0"
+    },
+    {
+      "time": 1778294616.194835,
+      "event": "fcntl(2, F_SETFD, FD_CLOEXEC) = 0"
+    },
+    {
+      "time": 1778294616.194905,
+      "event": "fcntl(3, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.194978,
+      "event": "fcntl(4, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.19505,
+      "event": "fcntl(5, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195122,
+      "event": "fcntl(6, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195191,
+      "event": "fcntl(7, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.19526,
+      "event": "fcntl(8, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.19533,
+      "event": "fcntl(9, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.1954,
+      "event": "fcntl(10, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195468,
+      "event": "fcntl(11, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195537,
+      "event": "fcntl(12, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195616,
+      "event": "fcntl(13, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195686,
+      "event": "fcntl(14, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195755,
+      "event": "fcntl(15, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195823,
+      "event": "fcntl(16, F_SETFD, FD_CLOEXEC) = -1 EBADF (Bad file descriptor)"
+    },
+    {
+      "time": 1778294616.195954,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.196029,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.196117,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.196189,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.19626,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.19633,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.196403,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.196474,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.196589,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.196663,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.196733,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.196802,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.196872,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.196942,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.197025,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.197095,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.197165,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.197235,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.197308,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.197379,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.197464,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.197535,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.197621,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.197693,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.197771,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.197842,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.197926,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.198005,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.198075,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.198145,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.198235,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.198309,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.198394,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.198465,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.198533,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.198609,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.198715,
+      "event": "futex(0x7febaf6271c0, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.198839,
+      "event": "newfstatat(AT_FDCWD, \"/usr/share/zoneinfo-icu/44/le/zoneinfo64.res\", 0x7ffd6f045e20, 0) = -1 ENOENT (No such file or directory)"
+    },
+    {
+      "time": 1778294616.198994,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.199069,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.199154,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.199223,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.199293,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.199362,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.19946,
+      "event": "futex(0x7febb010a34c, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199534,
+      "event": "futex(0x7febb010a314, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199622,
+      "event": "futex(0x7febb010a308, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199694,
+      "event": "futex(0x7febb010a300, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199836,
+      "event": "futex(0x7febb0109ac8, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199911,
+      "event": "futex(0x7febb0109e2c, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.199994,
+      "event": "futex(0x7febb0109d64, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.200068,
+      "event": "futex(0x7febb010a354, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.20014,
+      "event": "futex(0x7febb0109d58, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.20044,
+      "event": "futex(0x7febb010a2f8, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.200533,
+      "event": "openat(AT_FDCWD, \"/usr/lib/ssl/openssl.cnf\", O_RDONLY) = 3"
+    },
+    {
+      "time": 1778294616.20066,
+      "event": "fstat(3, {st_mode=S_IFREG|0644, st_size=12411, ...}) = 0"
+    },
+    {
+      "time": 1778294616.20075,
+      "event": "read(3, \"#\\n# OpenSSL example configuratio\"..., 4096) = 4096"
+    },
+    {
+      "time": 1778294616.200872,
+      "event": "read(3, \"d attributes must be the same, a\"..., 4096) = 4096"
+    },
+    {
+      "time": 1778294616.200973,
+      "event": "brk(0x55e90315c000)   = 0x55e90315c000"
+    },
+    {
+      "time": 1778294616.201085,
+      "event": "read(3, \"coding of an extension: beware e\"..., 4096) = 4096"
+    },
+    {
+      "time": 1778294616.20121,
+      "event": "read(3, \"cert = $insta::certout # insta.c\"..., 4096) = 123"
+    },
+    {
+      "time": 1778294616.201302,
+      "event": "read(3, \"\", 4096)     = 0"
+    },
+    {
+      "time": 1778294616.201378,
+      "event": "close(3)              = 0"
+    },
+    {
+      "time": 1778294616.20149,
+      "event": "futex(0x7febb010a2d8, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.201596,
+      "event": "futex(0x7febb010a460, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.201686,
+      "event": "futex(0x7febb010a400, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.201858,
+      "event": "futex(0x7febb010a2e8, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.201958,
+      "event": "futex(0x7febb010a2e0, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.20239,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.202673,
+      "event": "brk(0x55e90317d000)   = 0x55e90317d000"
+    },
+    {
+      "time": 1778294616.202975,
+      "event": "getrandom(\"\\xa3\\x04\\x28\\xfc\\x89\\x6c\\xf2\\xdc\\xbc\\x93\\x09\\x90\\x7c\\x9c\\x03\\x82\\x20\\xf0\\x2e\\xd4\\x7a\\xc3\\xe0\\xab\\xaf\\xf5\\xd6\\xdc\\x92\\xf8\\x6d\\xd6\"..., 48, 0) = 48"
+    },
+    {
+      "time": 1778294616.203075,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.203164,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.203272,
+      "event": "getpid()              = 13"
+    },
+    {
+      "time": 1778294616.203347,
+      "event": "capget({version=_LINUX_CAPABILITY_VERSION_3, pid=13}, {effective=1<<CAP_CHOWN|1<<CAP_DAC_OVERRIDE|1<<CAP_DAC_READ_SEARCH|1<<CAP_FOWNER|1<<CAP_FSETID|1<<CAP_KILL|1<<CAP_SETGID|1<<CAP_SETUID|1<<CAP_SETPCAP|1<<CAP_LINUX_IMMUTABLE|1<<CAP_NET_BIND_SERVICE|1<<CAP_NET_BROADCAST|1<<CAP_NET_ADMIN|1<<CAP_NET_RAW|1<<CAP_IPC_LOCK|1<<CAP_IPC_OWNER|1<<CAP_SYS_MODULE|1<<CAP_SYS_RAWIO|1<<CAP_SYS_CHROOT|1<<CAP_SYS_PTRACE|1<<CAP_SYS_PACCT|1<<CAP_SYS_ADMIN|1<<CAP_SYS_BOOT|1<<CAP_SYS_NICE|1<<CAP_SYS_RESOURCE|1<<CAP"
+    },
+    {
+      "time": 1778294616.203435,
+      "event": "getuid()              = 0"
+    },
+    {
+      "time": 1778294616.203503,
+      "event": "geteuid()             = 0"
+    },
+    {
+      "time": 1778294616.203595,
+      "event": "getgid()              = 0"
+    },
+    {
+      "time": 1778294616.203696,
+      "event": "getegid()             = 0"
+    },
+    {
+      "time": 1778294616.203817,
+      "event": "epoll_create1(EPOLL_CLOEXEC) = 3"
+    },
+    {
+      "time": 1778294616.203925,
+      "event": "openat(AT_FDCWD, \"/proc/version_signature\", O_RDONLY|O_CLOEXEC) = 4"
+    },
+    {
+      "time": 1778294616.204047,
+      "event": "read(4, \"Ubuntu 6.17.0-1010.10~24.04.1-az\"..., 255) = 44"
+    },
+    {
+      "time": 1778294616.204155,
+      "event": "close(4)              = 0"
+    },
+    {
+      "time": 1778294616.204285,
+      "event": "io_uring_setup(256, {flags=IORING_SETUP_NO_SQARRAY, sq_thread_cpu=0, sq_thread_idle=0, sq_entries=256, cq_entries=512, features=IORING_FEAT_SINGLE_MMAP|IORING_FEAT_NODROP|IORING_FEAT_SUBMIT_STABLE|IORING_FEAT_RW_CUR_POS|IORING_FEAT_CUR_PERSONALITY|IORING_FEAT_FAST_POLL|IORING_FEAT_POLL_32BITS|IORING_FEAT_SQPOLL_NONFIXED|IORING_FEAT_EXT_ARG|IORING_FEAT_NATIVE_WORKERS|IORING_FEAT_RSRC_TAGS|IORING_FEAT_CQE_SKIP|IORING_FEAT_LINKED_FILE|IORING_FEAT_REG_REG_RING|IORING_FEAT_RECVSEND_BUNDLE|IORING_FEAT"
+    },
+    {
+      "time": 1778294616.204445,
+      "event": "mmap(NULL, 8256, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 4, 0) = 0x7febb393d000"
+    },
+    {
+      "time": 1778294616.204552,
+      "event": "mmap(NULL, 16384, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_POPULATE, 4, 0x10000000) = 0x7febb3939000"
+    },
+    {
+      "time": 1778294616.204666,
+      "event": "pipe2([5, 6], O_CLOEXEC) = 0"
+    },
+    {
+      "time": 1778294616.204761,
+      "event": "write(6, \"*\", 1)      = 1"
+    },
+    {
+      "time": 1778294616.20484,
+      "event": "futex(0x7febb0263f50, FUTEX_WAKE_PRIVATE, 2147483647) = 0"
+    },
+    {
+      "time": 1778294616.204914,
+      "event": "pipe2([7, 8], O_NONBLOCK|O_CLOEXEC) = 0"
+    },
+    {
+      "time": 1778294616.205016,
+      "event": "eventfd2(0, EFD_CLOEXEC|EFD_NONBLOCK) = 9"
+    },
+    {
+      "time": 1778294616.205112,
+      "event": "prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=16384*1024, rlim_max=RLIM64_INFINITY}) = 0"
+    },
+    {
+      "time": 1778294616.205202,
+      "event": "rt_sigaction(SIGRT_1, {sa_handler=0x7febb03154b0, sa_mask=[], sa_flags=SA_RESTORER|SA_ONSTACK|SA_RESTART|SA_SIGINFO, sa_restorer=0x7febb02c4df0}, NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.205281,
+      "event": "rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0"
+    },
+    {
+      "time": 1778294616.205356,
+      "event": "mmap(NULL, 16781312, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0x7febac0e5000"
+    },
+    {
+      "time": 1778294616.205437,
+      "event": "mprotect(0x7febac0e6000, 16777216, PROT_READ|PROT_WRITE) = 0"
+    },
+    {
+      "time": 1778294616.205542,
+      "event": "rt_sigprocmask(SIG_BLOCK, ~[], [USR1], 8) = 0"
+    },
+    {
+      "time": 1778294616.205635,
+      "event": "clone3({flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, child_tid=0x7febad0e5990, parent_tid=0x7febad0e5990, exit_signal=0, stack=0x7febac0e5000, stack_size=0xfffe40, tls=0x7febad0e56c0}strace: Process 14 attached"
+    },
+    {
+      "time": 1778294617.201706,
+      "event": "+++ exited with 0 +++"
+    }
+  ],
+  "behavior_score": 15,
+  "behavior_tiers": [
+    "high",
+    "high"
+  ],
+  "behavior_weights": [
+    5,
+    10
+  ],
+  "dns_queries": [
+    "hyper-cr4te.1dorelax.surf."
+  ],
+  "http_hosts": [],
+  "http_methods": [
+    "POST"
+  ],
+  "http_paths": [
+    "/api/update"
+  ],
+  "dynamic_features": {
+    "feat_behavior_score": 15,
+    "feat_has_exfiltration_phase": "False",
+    "feat_has_credential_access_phase": "False",
+    "feat_has_persistence_phase": "False",
+    "feat_contacted_external_domain": "hyper-cr4te.1dorelax.surf",
+    "feat_sensitive_file_read": "False",
+    "feat_honeytoken_triggered": "False",
+    "feat_spawned_shell": "False",
+    "feat_dns_query_to_external": "hyper-cr4te.1dorelax.surf",
+    "feat_http_method": "POST",
+    "feat_http_exfil_attempt": "True",
+    "feat_domain_is_known_malicious": "False",
+    "feat_contacted_countries": "none",
+    "feat_contacted_isps": "none",
+    "feat_http_user_agents": "npm-synthetic-fixture/1.0",
+    "decoy_processes_spawned": "index.js|node",
+    "decoy_sensitive_files_accessed": "none",
+    "decoy_new_files_created": "/tmp/tmp9khxek44/config.json|/tmp/tmp9khxek44/.env|/tmp/tmp9khxek44/secrets.yaml|/tmp/tmp9khxek44/.aws/credentials|/tmp/tmp9khxek44/.ssh/id_rsa",
+    "decoy_modified_files": "none",
+    "decoy_honeytoken_types_triggered": "none",
+    "falco_privilege_escalation": "True",
+    "falco_write_binary_dir": "True",
+    "falco_ptrace_detected": "True",
+    "falco_package_install_runtime": "True"
+  },
+  "falco_alerts": [
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.398870446: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=41573810 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=systemd.postins command=systemctl enable getty@tty1.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.406966818: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=49652729 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=systemd.postins command=systemctl enable remote-fs.target terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.412430085: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=55127658 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=systemd.postins command=systemctl enable systemd-pstore.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.418194323: Critical Executing binary not part of base image | proc_exe=systemd-machine-id-setup proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=60888229 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-machine proc_exepath=/usr/bin/systemd-machine-id-setup parent=systemd.postins command=systemd-machine terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.424064798: Critical Executing binary not part of base image | proc_exe=journalctl proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533356162239 proc_exe_ino_mtime=3286629868575135744 proc_exe_ino_ctime_duration_proc_start=67769321 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=journalctl proc_exepath=/usr/bin/journalctl parent=systemd.postins command=journalctl --update-catalog terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.436831551: Critical Executing binary not part of base image | proc_exe=systemd-sysusers proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=79535917 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd.postins command=systemd-sysuser basic.conf systemd-journal.conf systemd-network.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:13.443706217: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd.postins command=systemd-sysuser basic.conf systemd-journal.conf systemd-network.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:13.446017492: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd.postins command=systemd-sysuser basic.conf systemd-journal.conf systemd-network.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:13.447604939: Critical Executing binary not part of base image | proc_exe=systemd-tmpfiles proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=90272386 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-tmpfile proc_exepath=/usr/bin/systemd-tmpfiles parent=systemd.postins command=systemd-tmpfile --create 20-systemd-shell-extra.conf 20-systemd-ssh-generator.conf 20-systemd-stub.conf credstore.conf debian.conf home.conf journal-nocow.conf legacy.conf provision.conf systemd-network.conf systemd-nologin.conf systemd-pstore.conf systemd-tmp.conf systemd.conf tmp.conf var.conf x11.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.259829937: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=911525543 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=python3-minimal command=py3compile /usr/bin/py3compile -p python3-minimal /usr/share/python3/ terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.307775974: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=python3-minimal proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=959470969 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.308140070: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-minimal proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=911525543 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-minimal /usr/share/python3/ terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.308290009: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-minimal proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=959892692 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import sys; print(sys.implementation.cache_tag) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.323299286: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-minimal proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=911525543 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-minimal /usr/share/python3/ terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:16.323476086: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-minimal proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=975090951 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import importlib.util; print(importlib.util.MAGIC_NUMBER) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:46.878933142: Critical Executing binary not part of base image | proc_exe=/sbin/runlevel proc_sname=dpkg gparent=x11-common.post proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=33521563810 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=runlevel proc_exepath=/usr/bin/systemctl parent=invoke-rc.d command=runlevel terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.494942245: Critical Executing binary not part of base image | proc_exe=aa-enabled proc_sname=dpkg gparent=frontend proc_exe_ino_ctime=1778294538427154055 proc_exe_ino_mtime=3578910281578785280 proc_exe_ino_ctime_duration_proc_start=29067669349 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=aa-enabled proc_exepath=/usr/bin/aa-enabled parent=apparmor.postin command=aa-enabled --quiet terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.499252882: Critical Executing binary not part of base image | proc_exe=aa-enabled proc_sname=dpkg gparent=frontend proc_exe_ino_ctime=1778294538427154055 proc_exe_ino_mtime=3578910281578785280 proc_exe_ino_ctime_duration_proc_start=29071985086 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=aa-enabled proc_exepath=/usr/bin/aa-enabled parent=apparmor.postin command=aa-enabled --quiet terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.642732149: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=apparmor.postin proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=34285046528 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset apparmor.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.652830825: Critical Executing binary not part of base image | proc_exe=aa-status proc_sname=dpkg gparent=frontend proc_exe_ino_ctime=1778294538428154054 proc_exe_ino_mtime=3583205244579817984 proc_exe_ino_ctime_duration_proc_start=29224522444 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=aa-status proc_exepath=/usr/sbin/aa-status parent=apparmor.postin command=aa-status --enabled terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.850687988: Critical Executing binary not part of base image | proc_exe=systemd-sysusers proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=34493359873 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd-timesyn command=systemd-sysuser systemd-timesync.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:47.859127022: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd-timesyn command=systemd-sysuser systemd-timesync.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:47.861956481: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=systemd-timesyn command=systemd-sysuser systemd-timesync.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:47.972870836: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=systemd-timesyn proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=34615196135 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset systemd-time-wait-sync.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:48.090374505: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=systemd-timesyn proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=34732747053 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset systemd-timesyncd.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:48.422536104: Critical Executing binary not part of base image | proc_exe=systemd-sysusers proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=35065230501 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=dbus-system-bus command=systemd-sysuser dbus.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:48.431150716: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=dbus-system-bus command=systemd-sysuser dbus.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Read sensitive file untrusted",
+      "output": "02:42:48.433785132: Warning Sensitive file opened for reading by non-trusted program | file=/etc/shadow gparent=dpkg ggparent=apt-get gggparent=sh evt_type=openat user=root user_uid=0 user_loginuid=-1 process=systemd-sysuser proc_exepath=/usr/bin/systemd-sysusers parent=dbus-system-bus command=systemd-sysuser dbus.conf terminal=34816 container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:48.574851422: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=containerd.post proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=35217228980 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset containerd.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:49.021500011: Critical Executing binary not part of base image | proc_exe=aa-enabled proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294538427154055 proc_exe_ino_mtime=3578910281578785280 proc_exe_ino_ctime_duration_proc_start=30594231442 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=aa-enabled proc_exepath=/usr/bin/aa-enabled parent=tcpdump.postins command=aa-enabled --quiet terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:49.950344308: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34602052318 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=python3.postins command=py3compile /usr/bin/py3compile -p python3 /usr/share/python3/ terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.000251245: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=python3.postins proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34651919691 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.046456960: Critical Executing binary not part of base image | proc_exe=dbus-uuidgen proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533541161853 proc_exe_ino_mtime=4065733146477759488 proc_exe_ino_ctime_duration_proc_start=36505174743 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=dbus-uuidgen proc_exepath=/usr/bin/dbus-uuidgen parent=dbus-daemon.pos command=dbus-uuidgen --ensure terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.048570514: Critical Executing binary not part of base image | proc_exe=systemd-tmpfiles proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=36691259511 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-tmpfile proc_exepath=/usr/bin/systemd-tmpfiles parent=dbus-daemon.pos command=systemd-tmpfile --create dbus.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.112050089: Critical Executing binary not part of base image | proc_exe=/usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-schemas proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294549686156876 proc_exe_ino_mtime=4712586335345527296 proc_exe_ino_ctime_duration_proc_start=20425763792 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=glib-compile-sc proc_exepath=/usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-schemas parent=libglib2.0-0t64 command=glib-compile-sc /usr/share/glib-2.0/schemas terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.114912650: Critical Executing binary not part of base image | proc_exe=/usr/lib/x86_64-linux-gnu/glib-2.0/gio-querymodules proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294549686156876 proc_exe_ino_mtime=4712586335345527296 proc_exe_ino_ctime_duration_proc_start=20428592620 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=gio-querymodule proc_exepath=/usr/lib/x86_64-linux-gnu/glib-2.0/gio-querymodules parent=libglib2.0-0t64 command=gio-querymodule /usr/lib/x86_64-linux-gnu/gio/modules terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.135851322: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34787561295 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=python3-packagi command=py3compile /usr/bin/py3compile -p python3-packaging terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.170335561: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=python3-packagi proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34821954605 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.180862570: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-packagi proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34787561295 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-packaging terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.181014433: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-packagi proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34832654205 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import sys; print(sys.implementation.cache_tag) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.193120206: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-packagi proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34787561295 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-packaging terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.193298057: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-packagi proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=34844912783 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import importlib.util; print(importlib.util.MAGIC_NUMBER) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.295820456: Critical Executing binary not part of base image | proc_exe=/sbin/runlevel proc_sname=dpkg gparent=dbus.postinst proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=36938449632 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=runlevel proc_exepath=/usr/bin/systemctl parent=invoke-rc.d command=runlevel terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:50.313162095: Critical Executing binary not part of base image | proc_exe=update-mime-database proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294549739156767 proc_exe_ino_mtime=4912243178882092032 proc_exe_ino_ctime_duration_proc_start=20573873993 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=update-mime-dat proc_exepath=/usr/bin/update-mime-database parent=shared-mime-inf command=update-mime-dat /usr/share/mime terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.259583652: Critical Executing binary not part of base image | proc_exe=/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294550200155825 proc_exe_ino_mtime=2634998060478899200 proc_exe_ino_ctime_duration_proc_start=21059257389 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=gdk-pixbuf-quer proc_exepath=/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders parent=libgdk-pixbuf-2 command=gdk-pixbuf-quer /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ani.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-bmp.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-gif.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-icns.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-ico.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-pnm.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-qtif.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tga.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-tiff.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xbm.so /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-xpm.so terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.287141138: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35938830132 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=python3-protobu command=py3compile /usr/bin/py3compile -p python3-protobuf:amd64 terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.321611631: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=python3-protobu proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35973240884 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.335430876: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-protobu proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35938830132 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-protobuf:amd64 terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.335628173: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-protobu proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35987219265 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import sys; print(sys.implementation.cache_tag) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.347490593: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-protobu proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35938830132 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-protobuf:amd64 terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.347683901: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-protobu proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=35999275857 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import importlib.util; print(importlib.util.MAGIC_NUMBER) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.479028004: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36130720966 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=gyp.postinst command=py3compile /usr/bin/py3compile -p gyp terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.514695994: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=gyp.postinst proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36166315859 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.528932570: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=gyp.postinst proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36130720966 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p gyp terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.529097046: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=gyp.postinst proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36180722061 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import sys; print(sys.implementation.cache_tag) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.540901719: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=gyp.postinst proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36130720966 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p gyp terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.541063851: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=gyp.postinst proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=36192697462 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import importlib.util; print(importlib.util.MAGIC_NUMBER) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:51.987102909: Critical Executing binary not part of base image | proc_exe=getcap proc_sname=dpkg gparent=frontend proc_exe_ino_ctime=1778294536693156582 proc_exe_ino_mtime=4750071711697142272 proc_exe_ino_ctime_duration_proc_start=35293705549 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=getcap proc_exepath=/usr/sbin/getcap parent=iproute2.postin command=getcap /bin/ip terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.111189021: Critical Executing binary not part of base image | proc_exe=systemd-tmpfiles proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=38753907173 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemd-tmpfile proc_exepath=/usr/bin/systemd-tmpfiles parent=openssh-client. command=systemd-tmpfile --create openssh-client.conf terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.229696117: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=openssh-client. proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=38871996851 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --global --preset-mode=enable-only preset ssh-agent.socket terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.375987185: Critical Executing binary not part of base image | proc_exe=/sbin/runlevel proc_sname=dpkg gparent=docker.io.posti proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=39018591343 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=runlevel proc_exepath=/usr/bin/systemctl parent=invoke-rc.d command=runlevel terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.495888860: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=docker.io.posti proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=39138269693 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset docker.service terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.613264997: Critical Executing binary not part of base image | proc_exe=systemctl proc_sname=dpkg gparent=docker.io.posti proc_exe_ino_ctime=1778294533357162236 proc_exe_ino_mtime=3290924822986233856 proc_exe_ino_ctime_duration_proc_start=39255574578 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=systemctl proc_exepath=/usr/bin/systemctl parent=deb-systemd-hel command=systemctl --root=/ --system --preset-mode=enable-only preset docker.socket terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.744188517: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=dpkg proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37395898019 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=python3-pycriu. command=py3compile /usr/bin/py3compile -p python3-pycriu terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.779423571: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3.13 proc_sname=dpkg gparent=python3-pycriu. proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37431021050 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -m py_compile - terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.793918942: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-pycriu. proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37395898019 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-pycriu terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.794079822: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-pycriu. proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37445709525 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import sys; print(sys.implementation.cache_tag) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.806215371: Critical Executing binary not part of base image | proc_exe=/usr/bin/python3 proc_sname=dpkg gparent=python3-pycriu. proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37395898019 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=py3compile proc_exepath=/usr/bin/python3.13 parent=py3compile command=py3compile /usr/bin/py3compile -p python3-pycriu terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "Drop and execute new binary in container",
+      "output": "02:42:52.806378985: Critical Executing binary not part of base image | proc_exe=python3.13 proc_sname=dpkg gparent=python3-pycriu. proc_exe_ino_ctime=1778294535348158542 proc_exe_ino_mtime=3246207273713042432 proc_exe_ino_ctime_duration_proc_start=37458009400 proc_cwd=/ container_start_ts=1778294512734167506 evt_type=execve user=root user_uid=0 user_loginuid=-1 process=python3.13 proc_exepath=/usr/bin/python3.13 parent=py3compile command=python3.13 -c import importlib.util; print(importlib.util.MAGIC_NUMBER) terminal=34816 exe_flags=EXE_WRITABLE|EXE_UPPER_LAYER container_id=system.slice container_name=<NA> container_image_repository=<NA> container_image_tag=<NA> k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "PTRACE attached to process",
+      "output": "02:43:36.147086524: Warning Detected ptrace PTRACE_ATTACH attempt | proc_pcmdline=python sandbox/runner.py artifact-lifecycle-agent-1.1.3.tgz evt_type=ptrace user=root user_uid=0 user_loginuid=-1 process=strace proc_exepath=/usr/bin/strace parent=python command=strace -ttt -f -e trace=all node /tmp/tmp9khxek44/package/index.js terminal=0 container_id=fbda0882e0ac container_name=busy_kapitsa container_image_repository=ssc-sandbox container_image_tag=latest k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "PTRACE anti-debug attempt",
+      "output": "02:43:36.147335696: Notice Detected potential PTRACE_TRACEME anti-debug attempt | proc_pcmdline=strace -ttt -f -e trace=all node /tmp/tmp9khxek44/package/index.js evt_type=ptrace user=root user_uid=0 user_loginuid=-1 process=strace proc_exepath=/usr/bin/strace parent=strace command=strace -ttt -f -e trace=all node /tmp/tmp9khxek44/package/index.js terminal=0 container_id=fbda0882e0ac container_name=busy_kapitsa container_image_repository=ssc-sandbox container_image_tag=latest k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    },
+    {
+      "rule": "PTRACE attached to process",
+      "output": "02:43:36.147887717: Warning Detected ptrace PTRACE_ATTACH attempt | proc_pcmdline=python sandbox/runner.py artifact-lifecycle-agent-1.1.3.tgz evt_type=ptrace user=root user_uid=0 user_loginuid=-1 process=strace proc_exepath=/usr/bin/strace parent=python command=strace -ttt -f -e trace=all node /tmp/tmp9khxek44/package/index.js terminal=0 container_id=fbda0882e0ac container_name=busy_kapitsa container_image_repository=ssc-sandbox container_image_tag=latest k8s_pod_name=<NA> k8s_ns_name=<NA>"
+    }
+  ],
+  "falco_alert_count": 72
+}
