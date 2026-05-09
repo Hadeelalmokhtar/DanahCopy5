@@ -9,37 +9,54 @@ directly in dynamic_features of the decoy log.
 import json
 import sys
 import os
+import re
 
 
+# Replace this entire function:
 def parse_falco_alerts(falco_path: str) -> list:
-    """Read Falco output — handles both JSON array and NDJSON formats."""
+    """Read Falco output — handles JSON array, NDJSON, and journalctl -o json formats."""
     alerts = []
     try:
         with open(falco_path) as f:
             raw = f.read().strip()
 
-        # Try JSON array first
         if raw.startswith("["):
+            # Native Falco file_output — JSON array
             data = json.loads(raw)
             alerts = data if isinstance(data, list) else data.get("alerts", [])
-        elif raw.startswith("{"):
-            # Single JSON object with alerts key
-            data = json.loads(raw)
-            alerts = data.get("alerts", data.get("events", [data]))
+
         else:
             # NDJSON — one JSON object per line
+            # Covers both native Falco NDJSON and journalctl -o json
             for line in raw.split("\n"):
                 line = line.strip()
-                if line.startswith("{"):
-                    try:
-                        alerts.append(json.loads(line))
-                    except Exception:
-                        pass
+                if not line.startswith("{"):
+                    continue
+                try:
+                    obj = json.loads(line)
+                except Exception:
+                    continue
+
+                # Native Falco NDJSON — has top-level "rule" and "output"
+                if "rule" in obj:
+                    alerts.append(obj)
+
+                # journalctl -o json — alert text is inside "MESSAGE" field
+                elif "MESSAGE" in obj:
+                    msg = obj["MESSAGE"]
+                    # Skip non-alert journal lines
+                    if not any(kw in msg for kw in ["rule=", "Notice", "Warning", "Error"]):
+                        continue
+                    rule_match = re.search(r'rule=([^\s,]+)', msg)
+                    alerts.append({
+                        "rule":   rule_match.group(1) if rule_match else "",
+                        "output": msg,
+                    })
+
     except Exception as e:
         print(f"[merge_falco] Could not parse {falco_path}: {e}")
 
     return alerts
-
 
 def extract_falco_features(alerts: list) -> dict:
     """Extract 4 boolean features from Falco alert list."""
