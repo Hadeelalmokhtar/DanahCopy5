@@ -180,7 +180,7 @@ jobs:
 
           sudo journalctl -u falco-modern-bpf.service \
             --no-pager \
-            -o short-iso > /tmp/falco_events.json || true
+            -o json > /tmp/falco_events.json || true
 
           ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
           
