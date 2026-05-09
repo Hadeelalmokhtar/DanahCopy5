@@ -82,6 +82,7 @@ def extract_falco_features(alerts: list) -> dict:
         "falco_write_binary_dir":        "False",
         "falco_ptrace_detected":         "False",
         "falco_package_install_runtime": "False",
+        "falco_shell_spawned":           "False",
     }
 
     for alert in alerts:
@@ -110,6 +111,11 @@ def extract_falco_features(alerts: list) -> dict:
             "apt-get", "yum install", "apk add", "package manager"
         ]):
             features["falco_package_install_runtime"] = "True"
+
+        if any(kw in combined for kw in [
+            "shell in container", "spawned shell", "/bin/bash", "/bin/sh"
+        ]):
+            features["falco_shell_spawned"] = "True"
 
     return features
 
@@ -157,6 +163,7 @@ def main():
     print(f"  falco_write_binary_dir:        {features['falco_write_binary_dir']}")
     print(f"  falco_ptrace_detected:         {features['falco_ptrace_detected']}")
     print(f"  falco_package_install_runtime: {features['falco_package_install_runtime']}")
+    print(f"  falco_shell_spawned:           {features['falco_shell_spawned']}")
 
 
 if __name__ == "__main__":
