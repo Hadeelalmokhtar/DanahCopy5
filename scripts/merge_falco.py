@@ -53,10 +53,10 @@ def parse_falco_alerts(falco_path: str) -> list:
                     alerts.append({
                         "rule":   inner.get("rule", ""),
                         "output": inner.get("output", msg),
-                    })
-        continue
-    except Exception:
-        pass
+                     })
+                     continue
+                 except Exception:
+                     pass
 
     # Fallback — treat raw MESSAGE as output
     if not any(kw in msg for kw in ["rule=", "Notice", "Warning", "Error"]):
