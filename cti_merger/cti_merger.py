@@ -472,8 +472,6 @@ def run_once():
         row.update(extract_cti(ml_log, behavioral_log))
 
         # ── Falco runtime features ──
-        row.update(find_falco_log(pkg_name))
-
         append_row(row)
         processed.add(log_file)
         new_count += 1
