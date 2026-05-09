@@ -44,6 +44,8 @@ def parse_falco_alerts(falco_path: str) -> list:
                 # journalctl -o json — alert text is inside "MESSAGE" field
                 elif "MESSAGE" in obj:
                     msg = obj["MESSAGE"]
+                    if not msg:         
+                        continue
                     # Skip non-alert journal lines
                     if not any(kw in msg for kw in ["rule=", "Notice", "Warning", "Error"]):
                         continue
