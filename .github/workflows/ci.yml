@@ -146,14 +146,12 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-         echo "SANDBOX_START=$(date +%s)" >> $GITHUB_ENV
          
           docker run --rm --privileged \
             -e VIRUSTOTAL_API_KEY="$VIRUSTOTAL_API_KEY" \
             -v "${{ github.workspace }}:/app" \
             ssc-sandbox \
             python sandbox/runner.py "${{ steps.detect_pkg.outputs.package_path }}"
-          echo "SANDBOX_END=$(date +%s)" >> $GITHUB_ENV
           sudo chmod -R 777 decoy_logs/ || true
           sudo chmod -R 777 CTI_Storage/ || true
 
@@ -221,7 +219,7 @@ jobs:
           ls /tmp/falco* 2>/dev/null || echo "No falco files in /tmp"
 
           if [ -f "$FALCO_EVENTS" ] && [ -n "$DECOY_LOG" ] && [ -f "$DECOY_LOG" ]; then
-            python3 scripts/merge_falco.py "$FALCO_EVENTS" "$DECOY_LOG" "$SANDBOX_START" "$SANDBOX_END"
+            python3 scripts/merge_falco.py "$FALCO_EVENTS" "$DECOY_LOG"  
             echo "Falco alerts merged into decoy log"
           elif [ -f "$FALCO_EVENTS" ]; then
             cp "$FALCO_EVENTS" "decoy_logs/falco_${PKG_STEM}.json"
