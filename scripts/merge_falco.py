@@ -13,7 +13,7 @@ import re
 
 
 # Replace this entire function:
-def parse_falco_alerts(falco_path: str, start_time: float = None, end_time: float = None) -> list:
+def parse_falco_alerts(falco_path: str) -> list:
     """Read Falco output — handles JSON array, NDJSON, and journalctl -o json formats."""
     alerts = []
     try:
@@ -37,15 +37,6 @@ def parse_falco_alerts(falco_path: str, start_time: float = None, end_time: floa
                 except Exception:
                     continue
 
-                # ── Filter by sandbox time window ──
-                if start_time or end_time:
-                    ts_us = int(obj.get("__REALTIME_TIMESTAMP", 0))
-                    ts_s  = ts_us / 1_000_000
-                    if start_time and ts_s < start_time:
-                        continue   # before sandbox started
-                    if end_time and ts_s > end_time:
-                        continue   # after sandbox ended
-                    
 
                 # Native Falco NDJSON — has top-level "rule" and "output"
                 if "rule" in obj:
@@ -131,9 +122,7 @@ def main():
 
     falco_path = sys.argv[1]
     decoy_path = sys.argv[2]
-    start_time   = float(sys.argv[3]) if len(sys.argv) > 3 else None
-    end_time     = float(sys.argv[4]) if len(sys.argv) > 4 else None
-
+    
     # Parse Falco alerts
     alerts = parse_falco_alerts(falco_path, start_time, end_time)
     print(f"[merge_falco] Parsed {len(alerts)} Falco alerts")
