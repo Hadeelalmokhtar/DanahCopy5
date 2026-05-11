@@ -124,7 +124,7 @@ def main():
     decoy_path = sys.argv[2]
     
     # Parse Falco alerts
-    alerts = parse_falco_alerts(falco_path, start_time, end_time)
+    alerts = parse_falco_alerts(falco_path)
     print(f"[merge_falco] Parsed {len(alerts)} Falco alerts")
 
     # Extract features
