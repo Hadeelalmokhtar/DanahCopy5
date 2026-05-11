@@ -201,7 +201,7 @@ jobs:
                 /tmp/opensnoop.json \
                 /tmp/tcpconnect.json \
                 /tmp/syscount.json \
-                "$DECOY_LOG"
+                "$DECOY_LOG" \
                 "$CONTAINER_PID" 
             fi
             sudo chmod -R 777 decoy_logs/ || true
