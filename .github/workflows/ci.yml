@@ -42,6 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install yara-python semgrep
+          sudo apt-get install -y bpfcc-tools linux-headers-$(uname -r)
 
       - name: Download NLTK Data
         run: |
@@ -143,18 +144,62 @@ jobs:
           docker build -t ssc-sandbox -f sandbox/Dockerfile .
 
       - name: Run Dynamic Analysis
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
         run: |
-         
-          docker run --rm --privileged \
+          # Start container in background
+          docker run --rm --privileged -d \
+            --name ssc-sandbox-run \
             -e VIRUSTOTAL_API_KEY="$VIRUSTOTAL_API_KEY" \
             -v "${{ github.workspace }}:/app" \
             ssc-sandbox \
             python sandbox/runner.py "${{ steps.detect_pkg.outputs.package_path }}"
+
+          # Get container PID — only monitor THIS container
+          CONTAINER_PID=$(docker inspect --format '{{.State.Pid}}' ssc-sandbox-run)
+          echo "SANDBOX_START=$(date +%s)" >> $GITHUB_ENV
+          echo "CONTAINER_PID=$CONTAINER_PID" >> $GITHUB_ENV
+
+          # Start eBPF monitors filtered to container PID only
+          sudo opensnoop-bpfcc -p $CONTAINER_PID -j \
+            > /tmp/opensnoop.json 2>/dev/null &
+          sudo tcpconnect-bpfcc -p $CONTAINER_PID \
+            > /tmp/tcpconnect.json 2>/dev/null &
+          sudo syscount-bpfcc --pid $CONTAINER_PID -j \
+            > /tmp/syscount.json 2>/dev/null &
+
+          # Wait for container to finish
+          docker wait ssc-sandbox-run || true
+          echo "SANDBOX_END=$(date +%s)" >> $GITHUB_ENV
+
+          # Stop monitors
+          sudo pkill -f opensnoop-bpfcc || true
+          sudo pkill -f tcpconnect-bpfcc || true
+          sudo pkill -f syscount-bpfcc   || true
+
           sudo chmod -R 777 decoy_logs/ || true
           sudo chmod -R 777 CTI_Storage/ || true
+     
+      # =========================
+      # parse eBPF output
+      # =========================
+    
 
+      - name: Parse eBPF Results into Decoy Log
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+            PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
+            PTR_FILE="decoy_logs/ptr_${PKG_NAME}.txt"
+            
+            if [ -f "$PTR_FILE" ]; then
+              DECOY_LOG=$(cat "$PTR_FILE")
+              
+              python3 scripts/parse_ebpf.py \
+                /tmp/opensnoop.json \
+                /tmp/tcpconnect.json \
+                /tmp/syscount.json \
+                "$DECOY_LOG"
+            fi
+            sudo chmod -R 777 decoy_logs/ || true
       # =========================
       # FALCO — stop AFTER sandbox, then merge alerts into decoy log
       # =========================
