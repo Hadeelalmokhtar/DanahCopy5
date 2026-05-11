@@ -159,16 +159,20 @@ jobs:
           echo "CONTAINER_PID=$CONTAINER_PID" >> $GITHUB_ENV
 
           # Start eBPF monitors filtered to container PID only
-          sudo opensnoop-bpfcc -p $CONTAINER_PID -j \
+          sudo opensnoop-bpfcc -j \
             > /tmp/opensnoop.json 2>/dev/null &
-          sudo tcpconnect-bpfcc -p $CONTAINER_PID \
+          sudo tcpconnect-bpfcc \
             > /tmp/tcpconnect.json 2>/dev/null &
-          sudo syscount-bpfcc --pid $CONTAINER_PID -j \
+          sudo syscount-bpfcc -j \
             > /tmp/syscount.json 2>/dev/null &
+
+          sleep 2  # let monitors initialize
 
           # Wait for container to finish
           docker wait ssc-sandbox-run || true
           echo "SANDBOX_END=$(date +%s)" >> $GITHUB_ENV
+          echo "CONTAINER_PID=$CONTAINER_PID" >> $GITHUB_ENV
+
 
           # Stop monitors
           sudo pkill -f opensnoop-bpfcc || true
