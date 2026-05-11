@@ -93,6 +93,24 @@ CTI_COLUMNS = [
     "semgrep_has_subprocess",
     "semgrep_has_network_request",
     "semgrep_has_secret_access",
+    # ── eBPF  ──
+    "ebpf_accessed_root",
+    "ebpf_accessed_ssh",
+    "ebpf_accessed_etc",
+    "ebpf_security_ops",
+    "ebpf_network_ops",
+    "ebpf_process_ops",
+    "ebpf_file_ops",
+    "ebpf_privilege_escalation",
+    "ebpf_network_activity",
+    "ebpf_spawned_process",
+    "ebpf_c2_port_suspected",
+    "ebpf_remote_ips_count",
+    "pattern_c2_communication",
+    "pattern_process_injection",
+    "pattern_malicious_probing",
+    "pattern_privilege_escalation",
+    "pattern_file_locking",
 ]
 
 ALL_COLUMNS = DATASET_COLUMNS + CTI_COLUMNS
@@ -124,6 +142,23 @@ DEFAULTS = {
     "semgrep_has_subprocess":             "False",
     "semgrep_has_network_request":        "False",
     "semgrep_has_secret_access":          "False",
+    "ebpf_accessed_root":           "False",
+    "ebpf_accessed_ssh":            "False",
+    "ebpf_accessed_etc":            "False",
+    "ebpf_security_ops":            0,
+    "ebpf_network_ops":             0,
+    "ebpf_process_ops":             0,
+    "ebpf_file_ops":                0,
+    "ebpf_privilege_escalation":    "False",
+    "ebpf_network_activity":        "False",
+    "ebpf_spawned_process":         "False",
+    "ebpf_c2_port_suspected":       "False", 
+    "ebpf_remote_ips_count":        0,
+    "pattern_c2_communication":     "False",
+    "pattern_process_injection":    "False",
+    "pattern_malicious_probing":    "False",
+    "pattern_privilege_escalation": "False",
+    "pattern_file_locking":         "False",
 }
 
 
@@ -374,6 +409,25 @@ def extract_cti(ml_log, behavioral_log):
         row["falco_write_binary_dir"]        = _str_bool(dynamic.get("falco_write_binary_dir",        "False"))
         row["falco_ptrace_detected"]         = _str_bool(dynamic.get("falco_ptrace_detected",         "False"))
         row["falco_package_install_runtime"] = _str_bool(dynamic.get("falco_package_install_runtime", "False"))
+      # ── eBPF features — from parse_ebpf.py ──
+        row["ebpf_accessed_root"]            = _str_bool(dynamic.get("ebpf_accessed_root",           "False"))
+        row["ebpf_accessed_ssh"]             = _str_bool(dynamic.get("ebpf_accessed_ssh",            "False"))
+        row["ebpf_accessed_etc"]             = _str_bool(dynamic.get("ebpf_accessed_etc",            "False"))
+        row["ebpf_security_ops"]             = dynamic.get("ebpf_security_ops",                      0)
+        row["ebpf_network_ops"]              = dynamic.get("ebpf_network_ops",                       0)
+        row["ebpf_process_ops"]              = dynamic.get("ebpf_process_ops",                       0)
+        row["ebpf_file_ops"]                 = dynamic.get("ebpf_file_ops",                          0)
+        row["ebpf_privilege_escalation"]     = _str_bool(dynamic.get("ebpf_privilege_escalation",    "False"))
+        row["ebpf_network_activity"]         = _str_bool(dynamic.get("ebpf_network_activity",        "False"))
+        row["ebpf_spawned_process"]          = _str_bool(dynamic.get("ebpf_spawned_process",         "False"))
+        row["ebpf_c2_port_suspected"]        = _str_bool(dynamic.get("ebpf_c2_port_suspected",       "False"))
+        row["ebpf_remote_ips_count"]         = dynamic.get("ebpf_remote_ips_count",                  0)
+        row["pattern_c2_communication"]      = _str_bool(dynamic.get("pattern_c2_communication",     "False"))
+        row["pattern_process_injection"]     = _str_bool(dynamic.get("pattern_process_injection",    "False"))
+        row["pattern_malicious_probing"]     = _str_bool(dynamic.get("pattern_malicious_probing",    "False"))
+        row["pattern_privilege_escalation"]  = _str_bool(dynamic.get("pattern_privilege_escalation", "False"))
+        row["pattern_file_locking"]          = _str_bool(dynamic.get("pattern_file_locking",         "False"))
+       
 
         # NOTE: YARA and Semgrep already set from ml_log["static_analysis"] above
 
