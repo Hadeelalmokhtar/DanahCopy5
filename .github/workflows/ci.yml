@@ -146,7 +146,7 @@ jobs:
       - name: Run Dynamic Analysis
         run: |
           # Start container in background
-          docker run --rm --privileged -d \
+          docker run --privileged -d \
             --name ssc-sandbox-run \
             -e VIRUSTOTAL_API_KEY="$VIRUSTOTAL_API_KEY" \
             -v "${{ github.workspace }}:/app" \
@@ -178,7 +178,8 @@ jobs:
           sudo pkill -f opensnoop-bpfcc || true
           sudo pkill -f tcpconnect-bpfcc || true
           sudo pkill -f syscount-bpfcc   || true
-
+          
+          docker rm ssc-sandbox-run || true
           sudo chmod -R 777 decoy_logs/ || true
           sudo chmod -R 777 CTI_Storage/ || true
      
