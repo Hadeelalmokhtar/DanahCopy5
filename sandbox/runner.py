@@ -583,12 +583,102 @@ SENSITIVE_FILE_PATTERNS = [
 ]
 SYSTEM_FILE_PREFIXES = ["/usr/lib/","/usr/local/lib/","/usr/share/","/tmp/","__pycache__",".pyc"]
 
+# ============================================================
+# PROC-BASED BEHAVIORAL MONITOR
+# Pure Python — no kernel access needed, works on GitHub Actions
+# Replaces Falco/eBPF features using /proc + psutil
+# ============================================================
+
+def monitor_process_behavior(pid: int, duration: int = 120) -> dict:
+    features = {
+        "proc_privilege_escalation":    False,
+        "proc_write_binary_dir":        False,
+        "proc_ptrace_detected":         False,
+        "proc_package_install_runtime": False,
+    }
+
+    try:
+        import psutil
+    except ImportError:
+        print("[monitor] psutil not available — skipping")
+        return features
+
+    binary_dirs  = {"/bin/", "/usr/bin/", "/sbin/", "/usr/sbin/", "/usr/local/bin/"}
+    pkg_managers = {"pip", "pip3", "npm", "apt-get", "apt", "apk", "yum", "conda"}
+    start        = time.time()
+    seen_pids    = set()
+
+    try:
+        root        = psutil.Process(pid)
+        initial_uid = root.uids().real
+    except Exception:
+        return features
+
+    while time.time() - start < duration:
+        try:
+            children  = root.children(recursive=True)
+            all_procs = [root] + children
+
+            for proc in all_procs:
+                try:
+                    # ── proc_package_install_runtime ──
+                    name    = proc.name().lower()
+                    cmdline = " ".join(proc.cmdline()).lower()
+                    if any(pm in name or pm in cmdline for pm in pkg_managers):
+                        features["proc_package_install_runtime"] = True
+
+                    # ── proc_privilege_escalation ──
+                    uids = proc.uids()
+                    if uids.effective == 0 and uids.real != 0:
+                        features["proc_privilege_escalation"] = True
+                    if initial_uid != 0 and uids.real == 0:
+                        features["proc_privilege_escalation"] = True
+
+                    # ── proc_write_binary_dir ──
+                    if proc.pid not in seen_pids:
+                        seen_pids.add(proc.pid)
+                        try:
+                            for f in proc.open_files():
+                                if any(f.path.startswith(d) for d in binary_dirs):
+                                    features["proc_write_binary_dir"] = True
+                        except Exception:
+                            pass
+
+                    # ── proc_ptrace_detected ──
+                    try:
+                        with open(f"/proc/{proc.pid}/status") as sf:
+                            for line in sf:
+                                if line.startswith("TracerPid:"):
+                                    if int(line.split(":")[1].strip()) > 0:
+                                        features["proc_ptrace_detected"] = True
+                                    break
+                    except Exception:
+                        pass
+
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            break
+
+        if all(features.values()):
+            break
+
+        time.sleep(0.5)
+
+    print(f"[monitor] proc features: {features}")
+    return features
+    
 def extract_dynamic_features(
     processes, accessed_files, new_files, modified_files,
     network_analysis, captured_requests, honeytoken_hits,
     strace_all_lines, behavioral_phases, behavior_score,
     static_results,
+    behavioral_monitor=None,
 ):
+    if behavioral_monitor is None:
+        behavioral_monitor = {}
+        
     unique_processes = list(set(processes))
     spawned_shell    = any(re.search(r'\b(bash|sh|dash|cmd\.exe|powershell)\b', p) for p in unique_processes)
 
@@ -734,6 +824,12 @@ def extract_dynamic_features(
         "decoy_new_files_created":          new_files_value,
         "decoy_modified_files":             modified_files_value,
         "decoy_honeytoken_types_triggered": honeytoken_types,
+          # ── Proc monitor features — replaces Falco/eBPF ──
+        "proc_privilege_escalation":    str(behavioral_monitor.get("proc_privilege_escalation",    False)),
+        "proc_write_binary_dir":        str(behavioral_monitor.get("proc_write_binary_dir",        False)),
+        "proc_ptrace_detected":         str(behavioral_monitor.get("proc_ptrace_detected",         False)),
+        "proc_package_install_runtime": str(behavioral_monitor.get("proc_package_install_runtime", False)),
+        
     }
 
 # ============================================================
@@ -806,6 +902,15 @@ for target in targets:
 
     mem_thread = threading.Thread(target=_mem_dump, args=(proc.pid,), daemon=True)
     mem_thread.start()
+
+    # ── Start proc behavioral monitor ──
+    behavioral_monitor_result = {}
+    def _run_monitor():
+        behavioral_monitor_result.update(
+            monitor_process_behavior(proc.pid, duration=120)
+        )
+    monitor_thread = threading.Thread(target=_run_monitor, daemon=True)
+    monitor_thread.start()
 
     try:
         # Fix 3: Increased timeout from 60s to 120s to capture delayed network activity
@@ -898,6 +1003,9 @@ behavioral_phases = build_behavioral_phases(timeline)
 graph_data = build_process_graph(processes, accessed_files, network_analysis, honeytoken_hits)
 
 # Dynamic features
+# Wait for monitor thread
+monitor_thread.join(timeout=5)
+
 dynamic_features = extract_dynamic_features(
     processes=processes,
     accessed_files=accessed_files,
@@ -910,6 +1018,7 @@ dynamic_features = extract_dynamic_features(
     behavioral_phases=behavioral_phases,
     behavior_score=score,
     static_results=static_results,
+    behavioral_monitor=behavioral_monitor_result,
 )
 
 
