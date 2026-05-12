@@ -31,6 +31,7 @@ COPY . .
 
 # ── Install project Python dependencies ──
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir psutil
 
 # ── Ensure scripts module works ──
 ENV PYTHONPATH=/app
