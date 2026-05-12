@@ -111,6 +111,11 @@ CTI_COLUMNS = [
     "pattern_malicious_probing",
     "pattern_privilege_escalation",
     "pattern_file_locking",
+   # ── Proc monitor — replaces Falco/eBPF ──
+    "proc_privilege_escalation",
+    "proc_write_binary_dir",
+    "proc_ptrace_detected",
+    "proc_package_install_runtime",
 ]
 
 ALL_COLUMNS = DATASET_COLUMNS + CTI_COLUMNS
@@ -159,6 +164,10 @@ DEFAULTS = {
     "pattern_malicious_probing":    "False",
     "pattern_privilege_escalation": "False",
     "pattern_file_locking":         "False",
+    "proc_privilege_escalation":          "False",
+    "proc_write_binary_dir":              "False",
+    "proc_ptrace_detected":               "False",
+    "proc_package_install_runtime":       "False",
 }
 
 
@@ -427,6 +436,10 @@ def extract_cti(ml_log, behavioral_log):
         row["pattern_malicious_probing"]     = _str_bool(dynamic.get("pattern_malicious_probing",    "False"))
         row["pattern_privilege_escalation"]  = _str_bool(dynamic.get("pattern_privilege_escalation", "False"))
         row["pattern_file_locking"]          = _str_bool(dynamic.get("pattern_file_locking",         "False"))
+        row["proc_privilege_escalation"]    = _str_bool(dynamic.get("proc_privilege_escalation",    "False"))
+        row["proc_write_binary_dir"]        = _str_bool(dynamic.get("proc_write_binary_dir",        "False"))
+        row["proc_ptrace_detected"]         = _str_bool(dynamic.get("proc_ptrace_detected",         "False"))
+        row["proc_package_install_runtime"] = _str_bool(dynamic.get("proc_package_install_runtime", "False"))
        
 
         # NOTE: YARA and Semgrep already set from ml_log["static_analysis"] above
