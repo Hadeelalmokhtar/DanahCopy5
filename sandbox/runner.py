@@ -626,12 +626,12 @@ def monitor_process_behavior(pid: int, duration: int = 120) -> dict:
                     cmdline = " ".join(proc.cmdline()).lower()
                     if any(pm in name or pm in cmdline for pm in pkg_managers):
                         features["proc_package_install_runtime"] = True
-
-                    # ── proc_privilege_escalation ──
-                    uids = proc.uids()
-                    if uids.effective == 0 and uids.real != 0:
-                        features["proc_privilege_escalation"] = True
-                    if initial_uid != 0 and uids.real == 0:
+                        
+                        # ── proc_privilege_escalation ──
+                    if any(kw in cmdline for kw in [
+                        "chmod", "setuid", "sudo", "chown",
+                        "setreuid", "setresuid", "capset"
+                    ]):
                         features["proc_privilege_escalation"] = True
 
                     # ── proc_write_binary_dir ──
