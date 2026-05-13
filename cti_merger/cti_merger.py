@@ -74,11 +74,6 @@ CTI_COLUMNS = [
     "has_persistence_phase",
     "contacted_country",
     "http_exfil_attempt",
-    # ── Falco eBPF runtime ──
-    "falco_privilege_escalation",
-    "falco_write_binary_dir",
-    "falco_ptrace_detected",
-    "falco_package_install_runtime",
     # ── Static — YARA ──
     "yara_credential_theft_indicators",
     "yara_exfiltration_indicators",
@@ -93,25 +88,7 @@ CTI_COLUMNS = [
     "semgrep_has_subprocess",
     "semgrep_has_network_request",
     "semgrep_has_secret_access",
-    # ── eBPF  ──
-    "ebpf_accessed_root",
-    "ebpf_accessed_ssh",
-    "ebpf_accessed_etc",
-    "ebpf_security_ops",
-    "ebpf_network_ops",
-    "ebpf_process_ops",
-    "ebpf_file_ops",
-    "ebpf_privilege_escalation",
-    "ebpf_network_activity",
-    "ebpf_spawned_process",
-    "ebpf_c2_port_suspected",
-    "ebpf_remote_ips_count",
-    "pattern_c2_communication",
-    "pattern_process_injection",
-    "pattern_malicious_probing",
-    "pattern_privilege_escalation",
-    "pattern_file_locking",
-   # ── Proc monitor — replaces Falco/eBPF ──
+     # ── Proc monitor — replaces Falco/eBPF ──
     "proc_privilege_escalation",
     "proc_write_binary_dir",
     "proc_ptrace_detected",
@@ -131,10 +108,6 @@ DEFAULTS = {
     "has_persistence_phase":              "False",
     "contacted_country":                  "none",
     "http_exfil_attempt":                 "False",
-    "falco_privilege_escalation":         "False",
-    "falco_write_binary_dir":             "False",
-    "falco_ptrace_detected":              "False",
-    "falco_package_install_runtime":      "False",
     "yara_credential_theft_indicators":   "False",
     "yara_exfiltration_indicators":       "False",
     "yara_shell_execution_indicators":    "False",
@@ -147,23 +120,6 @@ DEFAULTS = {
     "semgrep_has_subprocess":             "False",
     "semgrep_has_network_request":        "False",
     "semgrep_has_secret_access":          "False",
-    "ebpf_accessed_root":           "False",
-    "ebpf_accessed_ssh":            "False",
-    "ebpf_accessed_etc":            "False",
-    "ebpf_security_ops":            0,
-    "ebpf_network_ops":             0,
-    "ebpf_process_ops":             0,
-    "ebpf_file_ops":                0,
-    "ebpf_privilege_escalation":    "False",
-    "ebpf_network_activity":        "False",
-    "ebpf_spawned_process":         "False",
-    "ebpf_c2_port_suspected":       "False", 
-    "ebpf_remote_ips_count":        0,
-    "pattern_c2_communication":     "False",
-    "pattern_process_injection":    "False",
-    "pattern_malicious_probing":    "False",
-    "pattern_privilege_escalation": "False",
-    "pattern_file_locking":         "False",
     "proc_privilege_escalation":          "False",
     "proc_write_binary_dir":              "False",
     "proc_ptrace_detected":               "False",
@@ -229,49 +185,6 @@ def find_behavioral_log(pkg_name):
     candidates.sort(key=lambda x: x[0], reverse=True)
     return candidates[0][1], candidates[0][2]
 
-
-def find_falco_log(pkg_name: str) -> dict:
-    """
-    Read Falco features — either from a separate falco_*.json
-    OR from dynamic_features already merged into the decoy log.
-    Returns 4 boolean features.
-    """
-    result = {
-        "falco_privilege_escalation":    "False",
-        "falco_write_binary_dir":        "False",
-        "falco_ptrace_detected":         "False",
-        "falco_package_install_runtime": "False",
-    }
-
-    # First try separate falco log file
-    for path in glob.glob(os.path.join("decoy_logs", "falco_*.json")):
-        name_part = os.path.basename(path)[6:].replace(".json", "")
-        if pkg_name in name_part or name_part in pkg_name:
-            try:
-                with open(path) as f:
-                    data = json.load(f)
-                alerts = data if isinstance(data, list) else data.get("alerts", [])
-                for alert in alerts:
-                    rule   = str(alert.get("rule",   "")).lower()
-                    output = str(alert.get("output", "")).lower()
-                    combined = rule + " " + output
-                    if any(kw in combined for kw in ["privilege","setuid","chmod 777","escalat","sudo"]):
-                        result["falco_privilege_escalation"] = "True"
-                    if any(kw in combined for kw in ["write_binary","binary dir","/bin/","/usr/bin/","/sbin/"]):
-                        result["falco_write_binary_dir"] = "True"
-                    if any(kw in combined for kw in ["ptrace","proc/mem","process inject"]):
-                        result["falco_ptrace_detected"] = "True"
-                    if any(kw in combined for kw in ["package install","pip install","npm install","apt-get"]):
-                        result["falco_package_install_runtime"] = "True"
-                print(f"  [falco] Read from separate file: {result}")
-                return result
-            except Exception as e:
-                print(f"  [falco] Parse error: {e}")
-
-    # Falco features may already be in dynamic_features of decoy log
-    # They are set by cti_merger extract_cti via behavioral_log dynamic_features
-    # No separate file needed in that case — return defaults and let extract_cti handle it
-    return result
 
 
 def extract_ml_row(ml_log):
@@ -412,30 +325,6 @@ def extract_cti(ml_log, behavioral_log):
         # http_exfil_attempt — True/False
         row["http_exfil_attempt"] = _str_bool(dynamic.get("feat_http_exfil_attempt", "False"))
 
-        # Falco features — read from falco log (set in run_once)
-        # Falco features — merged into dynamic_features by merge_falco.py
-        row["falco_privilege_escalation"]    = _str_bool(dynamic.get("falco_privilege_escalation",    "False"))
-        row["falco_write_binary_dir"]        = _str_bool(dynamic.get("falco_write_binary_dir",        "False"))
-        row["falco_ptrace_detected"]         = _str_bool(dynamic.get("falco_ptrace_detected",         "False"))
-        row["falco_package_install_runtime"] = _str_bool(dynamic.get("falco_package_install_runtime", "False"))
-      # ── eBPF features — from parse_ebpf.py ──
-        row["ebpf_accessed_root"]            = _str_bool(dynamic.get("ebpf_accessed_root",           "False"))
-        row["ebpf_accessed_ssh"]             = _str_bool(dynamic.get("ebpf_accessed_ssh",            "False"))
-        row["ebpf_accessed_etc"]             = _str_bool(dynamic.get("ebpf_accessed_etc",            "False"))
-        row["ebpf_security_ops"]             = dynamic.get("ebpf_security_ops",                      0)
-        row["ebpf_network_ops"]              = dynamic.get("ebpf_network_ops",                       0)
-        row["ebpf_process_ops"]              = dynamic.get("ebpf_process_ops",                       0)
-        row["ebpf_file_ops"]                 = dynamic.get("ebpf_file_ops",                          0)
-        row["ebpf_privilege_escalation"]     = _str_bool(dynamic.get("ebpf_privilege_escalation",    "False"))
-        row["ebpf_network_activity"]         = _str_bool(dynamic.get("ebpf_network_activity",        "False"))
-        row["ebpf_spawned_process"]          = _str_bool(dynamic.get("ebpf_spawned_process",         "False"))
-        row["ebpf_c2_port_suspected"]        = _str_bool(dynamic.get("ebpf_c2_port_suspected",       "False"))
-        row["ebpf_remote_ips_count"]         = dynamic.get("ebpf_remote_ips_count",                  0)
-        row["pattern_c2_communication"]      = _str_bool(dynamic.get("pattern_c2_communication",     "False"))
-        row["pattern_process_injection"]     = _str_bool(dynamic.get("pattern_process_injection",    "False"))
-        row["pattern_malicious_probing"]     = _str_bool(dynamic.get("pattern_malicious_probing",    "False"))
-        row["pattern_privilege_escalation"]  = _str_bool(dynamic.get("pattern_privilege_escalation", "False"))
-        row["pattern_file_locking"]          = _str_bool(dynamic.get("pattern_file_locking",         "False"))
         row["proc_privilege_escalation"]    = _str_bool(dynamic.get("proc_privilege_escalation",    "False"))
         row["proc_write_binary_dir"]        = _str_bool(dynamic.get("proc_write_binary_dir",        "False"))
         row["proc_ptrace_detected"]         = _str_bool(dynamic.get("proc_ptrace_detected",         "False"))
