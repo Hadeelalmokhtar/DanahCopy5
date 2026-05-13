@@ -42,7 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install yara-python semgrep
-          sudo apt-get install -y bpfcc-tools linux-headers-$(uname -r)
+          
 
       - name: Download NLTK Data
         run: |
@@ -95,44 +95,7 @@ jobs:
           echo "package_path=$PACKAGE" >> $GITHUB_OUTPUT
           echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
 
-      # =========================
-      # FALCO — start BEFORE sandbox so it captures all runtime events
-      # =========================
-      - name: Start Falco
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
-        run: |
-          curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
-            sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
-
-          echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main" | \
-            sudo tee /etc/apt/sources.list.d/falcosecurity.list
-
-          sudo apt-get update -qq
-          sudo apt-get install -y falco
-
-          # Patch the main config directly — config.d override doesn't work reliably
-          sudo sed -i 's/^json_output: false/json_output: true/' /etc/falco/falco.yaml
-          sudo sed -i '/^file_output:/,/^[^ ]/ s/enabled: false/enabled: true/' /etc/falco/falco.yaml
-          sudo sed -i '/^file_output:/,/^[^ ]/ s|filename:.*|filename: /tmp/falco_events.json|' /etc/falco/falco.yaml
-
-          echo "=== Verify config ===" 
-          grep -A8 "file_output:" /etc/falco/falco.yaml
-          
-          sudo systemctl restart falco-modern-bpf.service
-          
-          # Give Falco up to 30s to fully initialize
-          for i in $(seq 1 30); do
-            if sudo journalctl -u falco-modern-bpf.service --no-pager -n 5 | grep -q "Events detected\|syscalls will be"; then
-              echo "Falco fully initialized ✅"
-              break
-            fi
-            sleep 1
-          done
-
-          echo "Falco restarted with file output config"
-          
-
+     
     
       
       # =========================
@@ -153,133 +116,12 @@ jobs:
             ssc-sandbox \
             python sandbox/runner.py "${{ steps.detect_pkg.outputs.package_path }}"
 
-          # Get container PID — only monitor THIS container
-          CONTAINER_PID=$(docker inspect --format '{{.State.Pid}}' ssc-sandbox-run)
-          echo "SANDBOX_START=$(date +%s)" >> $GITHUB_ENV
-          echo "CONTAINER_PID=$CONTAINER_PID" >> $GITHUB_ENV
-
-          # Start eBPF monitors filtered to container PID only
-          sudo opensnoop-bpfcc -j \
-            > /tmp/opensnoop.json 2>/dev/null &
-          sudo tcpconnect-bpfcc \
-            > /tmp/tcpconnect.json 2>/dev/null &
-          sudo syscount-bpfcc -j \
-            > /tmp/syscount.json 2>/dev/null &
-
-          sleep 2  # let monitors initialize
-
-          # Wait for container to finish
-          docker wait ssc-sandbox-run || true
-          echo "SANDBOX_END=$(date +%s)" >> $GITHUB_ENV
-          echo "CONTAINER_PID=$CONTAINER_PID" >> $GITHUB_ENV
-
-
-          # Stop monitors
-          sudo pkill -f opensnoop-bpfcc || true
-          sudo pkill -f tcpconnect-bpfcc || true
-          sudo pkill -f syscount-bpfcc   || true
-          
+         
           docker rm ssc-sandbox-run || true
           sudo chmod -R 777 decoy_logs/ || true
           sudo chmod -R 777 CTI_Storage/ || true
      
-      # =========================
-      # parse eBPF output
-      # =========================
-    
-
-      - name: Parse eBPF Results into Decoy Log
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
-        run: |
-            PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
-            PTR_FILE="decoy_logs/ptr_${PKG_NAME}.txt"
-            
-            if [ -f "$PTR_FILE" ]; then
-              DECOY_LOG=$(cat "$PTR_FILE")
-              
-              python3 scripts/parse_ebpf.py \
-                /tmp/opensnoop.json \
-                /tmp/tcpconnect.json \
-                /tmp/syscount.json \
-                "$DECOY_LOG" \
-                "$CONTAINER_PID" 
-            fi
-            sudo chmod -R 777 decoy_logs/ || true
-      # =========================
-      # FALCO — stop AFTER sandbox, then merge alerts into decoy log
-      # =========================
-      
-      - name: Stop Falco
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
-        run: |
-          sudo systemctl stop falco-modern-bpf.service || true
-
-          echo "=== Export Falco journal logs ==="
-
-          sudo journalctl -u falco-modern-bpf.service \
-            --no-pager \
-            -o json > /tmp/falco_events.json || true
-
-          ls -la /tmp/falco_events.json 2>/dev/null && echo "Events file preserved ✅" || echo "Events file not found ❌"
-          
-
-      - name: Merge Falco Results into Decoy Log
-        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
-        continue-on-error: true
-        run: |
-          PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
-          PKG_STEM="${PKG_NAME%.tgz}"
-          PKG_STEM="${PKG_STEM%.tar.gz}"
-
-          sudo chmod -R 777 decoy_logs/ || true
-
-          # Check where Falco actually wrote its output
-          echo "=== Searching for falco output files ==="
-          find /tmp -name "falco*" 2>/dev/null || echo "No falco files in /tmp"
-          find /var/log -name "falco*" 2>/dev/null || echo "No falco files in /var/log"
-          # falco-actions may write to a different location
-          ls -la /tmp/falco_events.json 2>/dev/null || echo "/tmp/falco_events.json not found"
-
-          FALCO_EVENTS="/tmp/falco_events.json"
-          
-          # Export Falco journal logs if file doesn't exist
-          if [ ! -f "$FALCO_EVENTS" ]; then
-            echo "Exporting Falco logs from journalctl..."
-
-            sudo journalctl -u falco-modern-bpf.service \
-              --no-pager \
-              -o cat > "$FALCO_EVENTS" || true
-          fi
-          
-          # runner.py writes a pointer file: decoy_logs/ptr_{pkg_name}.txt
-          # containing the exact path to this package's decoy log
-          PTR_FILE="decoy_logs/ptr_${PKG_NAME}.txt"
-          if [ -f "$PTR_FILE" ]; then
-            DECOY_LOG=$(cat "$PTR_FILE")
-            echo "Found pointer file: $PTR_FILE → $DECOY_LOG"
-          else
-            echo "No pointer file found at $PTR_FILE"
-            ls decoy_logs/ptr_* 2>/dev/null || echo "No pointer files"
-            DECOY_LOG=""
-          fi
-
-          echo "Falco events: $FALCO_EVENTS (exists: $([ -f "$FALCO_EVENTS" ] && echo yes || echo no))"
-          echo "Decoy log: $DECOY_LOG (exists: $([ -f "$DECOY_LOG" ] && echo yes || echo no))"
-          ls /tmp/falco* 2>/dev/null || echo "No falco files in /tmp"
-
-          if [ -f "$FALCO_EVENTS" ] && [ -n "$DECOY_LOG" ] && [ -f "$DECOY_LOG" ]; then
-            python3 scripts/merge_falco.py "$FALCO_EVENTS" "$DECOY_LOG"
-            echo "Falco alerts merged into decoy log"
-          elif [ -f "$FALCO_EVENTS" ]; then
-            cp "$FALCO_EVENTS" "decoy_logs/falco_${PKG_STEM}.json"
-            echo "Saved Falco events to separate file (no decoy log found)"
-          else
-            echo "No Falco events file produced"
-          fi
-          sudo chmod -R 777 decoy_logs/ || true
-
+   
       # =========================
       # ML GATE + YARA + SEMGREP — ALL PACKAGES
       # =========================
