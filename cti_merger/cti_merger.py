@@ -93,6 +93,23 @@ CTI_COLUMNS = [
     "proc_write_binary_dir",
     "proc_ptrace_detected",
     "proc_package_install_runtime",
+     "ebpf_accessed_root",
+    "ebpf_accessed_ssh",
+    "ebpf_accessed_etc",
+    "ebpf_security_ops",
+    "ebpf_network_ops",
+    "ebpf_process_ops",
+    "ebpf_file_ops",
+    "ebpf_privilege_escalation",
+    "ebpf_network_activity",
+    "ebpf_spawned_process",
+    "ebpf_c2_port_suspected",
+    "ebpf_remote_ips_count",
+    "pattern_c2_communication",
+    "pattern_process_injection",
+    "pattern_malicious_probing",
+    "pattern_privilege_escalation",
+    "pattern_file_locking",
 ]
 
 ALL_COLUMNS = DATASET_COLUMNS + CTI_COLUMNS
@@ -124,6 +141,24 @@ DEFAULTS = {
     "proc_write_binary_dir":              "False",
     "proc_ptrace_detected":               "False",
     "proc_package_install_runtime":       "False",
+    # ── AWS EC2 eBPF features ──
+    "ebpf_accessed_root":           "False",
+    "ebpf_accessed_ssh":            "False",
+    "ebpf_accessed_etc":            "False",
+    "ebpf_security_ops":            0,
+    "ebpf_network_ops":             0,
+    "ebpf_process_ops":             0,
+    "ebpf_file_ops":                0,
+    "ebpf_privilege_escalation":    "False",
+    "ebpf_network_activity":        "False",
+    "ebpf_spawned_process":         "False",
+    "ebpf_c2_port_suspected":       "False",
+    "ebpf_remote_ips_count":        0,
+    "pattern_c2_communication":     "False",
+    "pattern_process_injection":    "False",
+    "pattern_malicious_probing":    "False",
+    "pattern_privilege_escalation": "False",
+    "pattern_file_locking":         "False",
 }
 
 
