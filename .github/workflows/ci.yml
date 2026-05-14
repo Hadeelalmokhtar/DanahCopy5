@@ -233,6 +233,7 @@ jobs:
               git checkout --theirs CTI_Storage/enriched_cti_dataset.csv 2>/dev/null || true
               git checkout --theirs CTI_Storage/processed_runs.json 2>/dev/null || true
               git checkout --theirs decoy_logs/latest.json 2>/dev/null || true
+              git checkout --theirs decoy_logs/ 2>/dev/null || true
               git add CTI_Storage/ decoy_logs/ || true
               git rebase --continue 2>/dev/null || git rebase --skip || true
               sleep 3
