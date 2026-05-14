@@ -120,6 +120,38 @@ jobs:
           docker rm ssc-sandbox-run || true
           sudo chmod -R 777 decoy_logs/ || true
           sudo chmod -R 777 CTI_Storage/ || true
+          
+      # =========================
+      # AWS EC2 eBPF ANALYSIS
+      # =========================
+      - name: Signal AWS EC2 for eBPF Analysis
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Write package name to trigger file
+          echo "${{ steps.detect_pkg.outputs.package_name }}" > .ebpf_pending
+          git add .ebpf_pending
+          git commit -m "eBPF analysis requested: ${{ steps.detect_pkg.outputs.package_name }}"
+          git push origin main
+
+      - name: Wait for AWS EC2 eBPF Results
+        if: steps.detect_pkg.outputs.skip_pipeline == 'false'
+        continue-on-error: true
+        run: |
+          PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
+          echo "Waiting for AWS EC2 eBPF results for: $PKG_NAME"
+          for i in $(seq 1 30); do
+            git pull origin main 2>/dev/null || true
+            if [ -f "decoy_logs/ebpf_done_${PKG_NAME}.flag" ]; then
+              echo "eBPF results received ✅"
+              break
+            fi
+            echo "Attempt $i/30 — waiting 15 seconds..."
+            sleep 15
+          done
      
    
       # =========================
