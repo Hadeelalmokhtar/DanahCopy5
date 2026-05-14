@@ -371,6 +371,24 @@ def extract_cti(ml_log, behavioral_log):
         row["proc_write_binary_dir"]        = _str_bool(dynamic.get("proc_write_binary_dir",        "False"))
         row["proc_ptrace_detected"]         = _str_bool(dynamic.get("proc_ptrace_detected",         "False"))
         row["proc_package_install_runtime"] = _str_bool(dynamic.get("proc_package_install_runtime", "False"))
+       # ── AWS EC2 eBPF features ──
+        row["ebpf_accessed_root"]           = _str_bool(dynamic.get("ebpf_accessed_root",           "False"))
+        row["ebpf_accessed_ssh"]            = _str_bool(dynamic.get("ebpf_accessed_ssh",            "False"))
+        row["ebpf_accessed_etc"]            = _str_bool(dynamic.get("ebpf_accessed_etc",            "False"))
+        row["ebpf_security_ops"]            = dynamic.get("ebpf_security_ops",                      0)
+        row["ebpf_network_ops"]             = dynamic.get("ebpf_network_ops",                       0)
+        row["ebpf_process_ops"]             = dynamic.get("ebpf_process_ops",                       0)
+        row["ebpf_file_ops"]                = dynamic.get("ebpf_file_ops",                          0)
+        row["ebpf_privilege_escalation"]    = _str_bool(dynamic.get("ebpf_privilege_escalation",    "False"))
+        row["ebpf_network_activity"]        = _str_bool(dynamic.get("ebpf_network_activity",        "False"))
+        row["ebpf_spawned_process"]         = _str_bool(dynamic.get("ebpf_spawned_process",         "False"))
+        row["ebpf_c2_port_suspected"]       = _str_bool(dynamic.get("ebpf_c2_port_suspected",       "False"))
+        row["ebpf_remote_ips_count"]        = dynamic.get("ebpf_remote_ips_count",                  0)
+        row["pattern_c2_communication"]     = _str_bool(dynamic.get("pattern_c2_communication",     "False"))
+        row["pattern_process_injection"]    = _str_bool(dynamic.get("pattern_process_injection",    "False"))
+        row["pattern_malicious_probing"]    = _str_bool(dynamic.get("pattern_malicious_probing",    "False"))
+        row["pattern_privilege_escalation"] = _str_bool(dynamic.get("pattern_privilege_escalation", "False"))
+        row["pattern_file_locking"]         = _str_bool(dynamic.get("pattern_file_locking",         "False"))
        
 
         # NOTE: YARA and Semgrep already set from ml_log["static_analysis"] above
