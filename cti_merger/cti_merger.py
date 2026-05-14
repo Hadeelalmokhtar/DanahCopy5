@@ -175,6 +175,13 @@ def find_behavioral_log(pkg_name):
                     with open(path) as f: d = json.load(f)
                     candidates.append((ts, d, source))
                 except Exception: continue
+            # Match eBPF logs from AWS EC2: pkg_name_timestamp_ebpf
+            elif re.match(rf"^{re.escape(pkg_name)}_\d+_ebpf$", basename):
+                try:
+                    ts = int(basename.split("_")[-2])
+                    with open(path) as f: d = json.load(f)
+                    candidates.append((ts, d, "ebpf"))
+                except Exception: continue
             elif basename == pkg_name or basename.startswith(pkg_name + "_run"):
                 try:
                     with open(path) as f: d = json.load(f)
