@@ -225,6 +225,19 @@ def find_behavioral_log(pkg_name):
                 except Exception: continue
     if not candidates: return None, None
     candidates.sort(key=lambda x: x[0], reverse=True)
+
+    # Find regular log and eBPF log separately
+    regular_log = next((d for ts, d, s in candidates if s != "ebpf"), None)
+    ebpf_log    = next((d for ts, d, s in candidates if s == "ebpf"),  None)
+
+    # Merge eBPF features into regular log
+    if regular_log and ebpf_log:
+        ebpf_dynamic = ebpf_log.get("dynamic_features", {})
+        if "dynamic_features" not in regular_log:
+            regular_log["dynamic_features"] = {}
+        regular_log["dynamic_features"].update(ebpf_dynamic)
+        return regular_log, "merged"
+
     return candidates[0][1], candidates[0][2]
 
 
