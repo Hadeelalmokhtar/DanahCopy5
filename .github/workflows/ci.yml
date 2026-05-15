@@ -112,6 +112,7 @@ jobs:
           docker run --privileged \
             --name ssc-sandbox-run \
             -e VIRUSTOTAL_API_KEY="$VIRUSTOTAL_API_KEY" \
+            -e GH_RUN_NUMBER="${{ github.run_number }}" \
             -v "${{ github.workspace }}:/app" \
             ssc-sandbox \
             python sandbox/runner.py "${{ steps.detect_pkg.outputs.package_path }}"
@@ -132,7 +133,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Write package name to trigger file
-          echo "${{ steps.detect_pkg.outputs.package_name }}" > .ebpf_pending
+          echo "${{ steps.detect_pkg.outputs.package_name }}:${{ github.run_number }}" > .ebpf_pending
           git add .ebpf_pending
           git add decoy_logs/ || true
           git add CTI_Storage/ || true
