@@ -204,42 +204,90 @@ def find_behavioral_log(pkg_name):
     for log_dir, source in [(DECOY_LOGS_DIR, "decoy"), (BENIGN_LOGS_DIR, "benign")]:
         for path in glob.glob(os.path.join(log_dir, "*.json")):
             basename = os.path.basename(path).replace(".json", "")
-            if re.match(rf"^{re.escape(pkg_name)}_\d+$", basename):
+
+            # New format: pkgname_runNNN_sandbox.json
+            if re.match(rf"^{re.escape(pkg_name)}_run(\d+)_sandbox$", basename):
+                try:
+                    run_num = int(re.search(r'_run(\d+)_sandbox$', basename).group(1))
+                    with open(path) as f: d = json.load(f)
+                    candidates.append((run_num, d, source, "sandbox"))
+                except Exception: continue
+
+            # New format: pkgname_runNNN_ebpf.json
+            elif re.match(rf"^{re.escape(pkg_name)}_run(\d+)_ebpf$", basename):
+                try:
+                    run_num = int(re.search(r'_run(\d+)_ebpf$', basename).group(1))
+                    with open(path) as f: d = json.load(f)
+                    dyn  = d.get("dynamic_features", {})
+                    ebpf = d.get("ebpf_features", {})
+                    merged_dyn = {}
+                    for k, v in {**ebpf, **dyn}.items():
+                        if isinstance(v, str):
+                            if v.lower() == "true":    merged_dyn[k] = True
+                            elif v.lower() == "false": merged_dyn[k] = False
+                            else:
+                                try:    merged_dyn[k] = int(v)
+                                except: merged_dyn[k] = v
+                        else:
+                            merged_dyn[k] = v
+                    d["dynamic_features"] = merged_dyn
+                    candidates.append((run_num, d, "ebpf", "ebpf"))
+                except Exception: continue
+
+            # Old format: pkgname_timestamp.json
+            elif re.match(rf"^{re.escape(pkg_name)}_\d+$", basename):
                 try:
                     ts = int(basename.split("_")[-1])
                     with open(path) as f: d = json.load(f)
-                    candidates.append((ts, d, source))
+                    candidates.append((ts, d, source, "sandbox"))
                 except Exception: continue
-            # Match eBPF logs from AWS EC2: pkg_name_timestamp_ebpf
+
+            # Old format: pkgname_timestamp_ebpf.json
             elif re.match(rf"^{re.escape(pkg_name)}_\d+_ebpf$", basename):
                 try:
                     ts = int(basename.split("_")[-2])
                     with open(path) as f: d = json.load(f)
-                    candidates.append((ts, d, "ebpf"))
+                    dyn  = d.get("dynamic_features", {})
+                    ebpf = d.get("ebpf_features", {})
+                    merged_dyn = {}
+                    for k, v in {**ebpf, **dyn}.items():
+                        if isinstance(v, str):
+                            if v.lower() == "true":    merged_dyn[k] = True
+                            elif v.lower() == "false": merged_dyn[k] = False
+                            else:
+                                try:    merged_dyn[k] = int(v)
+                                except: merged_dyn[k] = v
+                        else:
+                            merged_dyn[k] = v
+                    d["dynamic_features"] = merged_dyn
+                    candidates.append((ts, d, "ebpf", "ebpf"))
                 except Exception: continue
-            elif basename == pkg_name or basename.startswith(pkg_name + "_run"):
-                try:
-                    with open(path) as f: d = json.load(f)
-                    run_num = 1 if basename == pkg_name else int(basename.split("_run")[-1])
-                    candidates.append((run_num, d, source))
-                except Exception: continue
+
     if not candidates: return None, None
     candidates.sort(key=lambda x: x[0], reverse=True)
 
-    # Find regular log and eBPF log separately
-    regular_log = next((d for ts, d, s in candidates if s != "ebpf"), None)
-    ebpf_log    = next((d for ts, d, s in candidates if s == "ebpf"),  None)
+    sandbox_logs = [(n, d) for n, d, s, t in candidates if t == "sandbox"]
+    ebpf_logs    = [(n, d) for n, d, s, t in candidates if t == "ebpf"]
 
-    # Merge eBPF features into regular log
+    # Best case: same run number
+    for s_num, s_log in sandbox_logs:
+        for e_num, e_log in ebpf_logs:
+            if s_num == e_num:
+                s_log.setdefault("dynamic_features", {}).update(e_log.get("dynamic_features", {}))
+                return s_log, "merged"
+
+    # Fallback: merge best of each
+    regular_log = sandbox_logs[0][1] if sandbox_logs else None
+    ebpf_log    = ebpf_logs[0][1]    if ebpf_logs    else None
+
     if regular_log and ebpf_log:
-        ebpf_dynamic = ebpf_log.get("dynamic_features", {})
-        if "dynamic_features" not in regular_log:
-            regular_log["dynamic_features"] = {}
-        regular_log["dynamic_features"].update(ebpf_dynamic)
+        regular_log.setdefault("dynamic_features", {}).update(ebpf_log.get("dynamic_features", {}))
         return regular_log, "merged"
 
-    return candidates[0][1], candidates[0][2]
+    if ebpf_log and not regular_log:
+        return ebpf_log, "ebpf"
 
+    return candidates[0][1], candidates[0][2]
 
 
 def extract_ml_row(ml_log):
