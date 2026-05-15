@@ -1064,8 +1064,8 @@ else:
     pkg_stem = os.path.splitext(pkg_basename)[0]
 
 pkg_stem = re.sub(r"[^\w.\-]", "_", pkg_stem)
-run_id   = str(int(time.time()))
-log_name = f"{pkg_stem}_{run_id}"
+run_id   = os.environ.get("GH_RUN_NUMBER", str(int(time.time())))
+log_name = f"{pkg_stem}_run{run_id}_sandbox"
 log_path = f"decoy_logs/decoy_runs/{log_name}.json"
 
 with open(log_path, "w") as f:
