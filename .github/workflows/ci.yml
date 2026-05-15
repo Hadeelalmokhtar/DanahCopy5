@@ -134,6 +134,7 @@ jobs:
 
           # Write package name to trigger file
           echo "${{ steps.detect_pkg.outputs.package_name }}:${{ github.run_number }}" > .ebpf_pending
+          rm -f decoy_logs/ebpf_done_${{ steps.detect_pkg.outputs.package_name }}.flag || true
           git add .ebpf_pending
           git add decoy_logs/ || true
           git add CTI_Storage/ || true
