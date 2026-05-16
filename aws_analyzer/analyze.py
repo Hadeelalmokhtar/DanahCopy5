@@ -267,7 +267,7 @@ def analyze_package(pkg_name, run_number="0"):
     # Stop monitors
     for p in [mon_open, mon_tcp]:
         subprocess.run(["sudo", "kill", str(p.pid)], capture_output=True)
-    subprocess.run(["sudo", "kill", str(mon_sys.pid)], capture_output=True)
+    subprocess.run(["sudo", "kill", "-SIGINT", str(mon_sys.pid)], capture_output=True)
     mon_sys.wait(timeout=10)
     f_open.flush()
     f_tcp.flush()
