@@ -164,6 +164,7 @@ jobs:
                 ubuntu@35.172.190.4:/home/ubuntu/DanahCopy5/decoy_logs/decoy_runs/${PKG_STEM}_run${RUN_NUM}_ebpf.json \
                 decoy_logs/decoy_runs/${PKG_STEM}_run${RUN_NUM}_ebpf.json
               echo "eBPF results received ✅"
+              git rm -f .ebpf_pending 2>/dev/null || true
               break
             fi
             echo "Not ready yet — waiting 10 seconds..."
@@ -242,7 +243,7 @@ jobs:
           git commit -m "SSC pipeline result (run ${{ github.run_number }})" || echo "Nothing to commit"
 
           for i in 1 2 3 4 5; do
-            git pull --rebase origin main && break || {
+            git pull --rebase --autostash origin main && break || {
               echo "Rebase conflict on attempt $i — resolving..."
               git checkout --theirs CTI_Storage/enriched_cti_dataset.csv 2>/dev/null || true
               git checkout --theirs CTI_Storage/processed_runs.json 2>/dev/null || true
