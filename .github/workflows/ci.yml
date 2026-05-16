@@ -145,6 +145,8 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
+          # Always delete old flag to force fresh EC2 analysis
+          rm -f decoy_logs/ebpf_done_${{ steps.detect_pkg.outputs.package_name }}.flag || true
           PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
           echo "Waiting for AWS EC2 eBPF results for: $PKG_NAME"
           for i in $(seq 1 40); do
