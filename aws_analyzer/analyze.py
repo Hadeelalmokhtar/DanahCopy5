@@ -3,7 +3,7 @@ AWS EC2 eBPF Analyzer
 Watches GitHub repo for new packages and runs full eBPF analysis.
 Pushes results back to GitHub.
 """
-
+  mon_sys = subprocess.Popen(
 import os
 import re
 import sys
@@ -104,7 +104,6 @@ def parse_tcpconnect(path, pid_filter=None):
         "ebpf_remote_ips":        "|".join(remote_ips),
     }
 
-
 def parse_syscount(path, pid_filter=None):
     security_calls = {"setuid","setgid","chmod","capset","setreuid","ptrace","capget"}
     network_calls  = {"socket","connect","accept","listen","sendto","recvfrom","bind"}
@@ -123,15 +122,16 @@ def parse_syscount(path, pid_filter=None):
             for line in f:
                 line = line.strip()
                 if not line: continue
+                if line.startswith("%"): continue
+                if line.startswith("-"): continue
+                if line.startswith("strace"): continue
                 if line.startswith("Tracing"): continue
                 if line.startswith("Detaching"): continue
-                if line.startswith("SYSCALL"): continue
-                if line.startswith("["): continue
                 parts = line.split()
-                if len(parts) < 2: continue
+                if len(parts) < 5: continue
                 try:
-                    name = parts[0].lower()
-                    cnt  = int(parts[-1])
+                    name = parts[-1].lower()
+                    cnt  = int(parts[3])
                 except:
                     continue
                 if name in security_calls: counts["ebpf_security_ops"] += cnt
@@ -215,11 +215,7 @@ def analyze_package(pkg_name, run_number="0"):
         stdout=f_tcp,
         stderr=subprocess.DEVNULL
     )
-    mon_sys = subprocess.Popen(
-        ["sudo", "syscount-bpfcc", "-c", "1000"],
-        stdout=f_sys,
-        stderr=subprocess.DEVNULL
-    )
+    mon_sys = None
     time.sleep(2)  # let monitors initialize
 
     # Extract and run package
@@ -237,15 +233,15 @@ def analyze_package(pkg_name, run_number="0"):
             js_files = glob.glob(f"{tmp_dir}/**/index.js", recursive=True)
             py_files = glob.glob(f"{tmp_dir}/**/*.py",     recursive=True)
 
-            if js_files:
+	    if js_files:
                 proc = subprocess.Popen(
-                    ["node", js_files[0]],
+                    ["strace", "-c", "-o", syscount_out, "node", js_files[0]],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL
                 )
             elif py_files:
                 proc = subprocess.Popen(
-                    ["python3", py_files[0]],
+                    ["strace", "-c", "-o", syscount_out, "python3", py_files[0]],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL
                 )
@@ -267,8 +263,8 @@ def analyze_package(pkg_name, run_number="0"):
     # Stop monitors
     for p in [mon_open, mon_tcp]:
         subprocess.run(["sudo", "kill", str(p.pid)], capture_output=True)
-    subprocess.run(["sudo", "kill", "-SIGINT", str(mon_sys.pid)], capture_output=True)
-    mon_sys.wait(timeout=10)
+    # subprocess.run(["sudo", "kill", "-SIGINT", str(mon_sys.pid)], capture_output=True)
+    #mon_sys.wait(timeout=10)
     f_open.flush()
     f_tcp.flush()
     f_sys.flush()
