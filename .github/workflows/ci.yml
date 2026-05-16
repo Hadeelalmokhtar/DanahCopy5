@@ -145,20 +145,30 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          # Always delete old flag to force fresh EC2 analysis
-          rm -f decoy_logs/ebpf_done_${{ steps.detect_pkg.outputs.package_name }}.flag || true
           PKG_NAME="${{ steps.detect_pkg.outputs.package_name }}"
-          echo "Waiting for AWS EC2 eBPF results for: $PKG_NAME"
-          for i in $(seq 1 40); do
-            git pull origin main 2>/dev/null || true
-            if [ -f "decoy_logs/ebpf_done_${PKG_NAME}.flag" ]; then
+          PKG_STEM="${PKG_NAME%.tgz}"
+          PKG_STEM="${PKG_STEM%.tar.gz}"
+          RUN_NUM="${{ github.run_number }}"
+
+
+
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
+
+          for i in $(seq 1 12); do
+            echo "Attempt $i/12 — checking EC2..."
+            if ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no ubuntu@35.172.190.4 \
+              "test -f /home/ubuntu/DanahCopy5/decoy_logs/decoy_runs/${PKG_STEM}_run${RUN_NUM}_ebpf.json"; then
+              scp -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no \
+                ubuntu@35.172.190.4:/home/ubuntu/DanahCopy5/decoy_logs/decoy_runs/${PKG_STEM}_run${RUN_NUM}_ebpf.json \
+                decoy_logs/decoy_runs/${PKG_STEM}_run${RUN_NUM}_ebpf.json
               echo "eBPF results received ✅"
               break
             fi
-            echo "Attempt $i/40 — waiting 10 seconds..."
+            echo "Not ready yet — waiting 10 seconds..."
             sleep 10
           done
-     
    
       # =========================
       # ML GATE + YARA + SEMGREP — ALL PACKAGES
