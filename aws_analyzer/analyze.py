@@ -325,10 +325,7 @@ def main():
                 print(f"[watcher] New package detected: {pkg_name} (run={run_number})")
                 
                 os.remove(pending)
-                # Delete pending file from GitHub too
-                subprocess.run(["git", "rm", "-f", WATCH_FILE], capture_output=True)
-                subprocess.run(["git", "commit", "-m", f"Start eBPF analysis: {pkg_name}"], capture_output=True)
-                subprocess.run(["git", "push", "origin", "main"], capture_output=True) 
+               
                
                 # Run analysis 
                 analyze_package(pkg_name, run_number)
