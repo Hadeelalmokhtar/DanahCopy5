@@ -129,21 +129,21 @@ jobs:
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
 
-          # Clean up any old pending file first
-          git rm -f .ebpf_pending 2>/dev/null || true
+          # Copy package directly to EC2
+          scp -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no \
+            "${{ steps.detect_pkg.outputs.package_path }}" \
+            ubuntu@35.172.190.4:/home/ubuntu/DanahCopy5/${{ steps.detect_pkg.outputs.package_name }}
 
-          # Write package name to trigger file
-          echo "${{ steps.detect_pkg.outputs.package_name }}:${{ github.run_number }}" > .ebpf_pending
-          rm -f decoy_logs/ebpf_done_${{ steps.detect_pkg.outputs.package_name }}.flag || true
-          git add .ebpf_pending
-          git add decoy_logs/ || true
-          git add CTI_Storage/ || true
-          git commit -m "eBPF analysis requested: ${{ steps.detect_pkg.outputs.package_name }}"
-          git push origin main
-          
+          # Write pending file directly to EC2
+          ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no ubuntu@35.172.190.4 \
+            "echo '${{ steps.detect_pkg.outputs.package_name }}:${{ github.run_number }}' > /home/ubuntu/DanahCopy5/.ebpf_pending"
+
+          echo "EC2 signaled ✅"
+                 
       - name: Wait for AWS EC2 eBPF Results
         if: steps.detect_pkg.outputs.skip_pipeline == 'false'
         continue-on-error: true
