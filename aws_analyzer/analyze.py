@@ -300,37 +300,20 @@ def main():
 
     while True:
         print(f"[watcher] Waiting... {time.strftime('%H:%M:%S')}")
-
-        result = subprocess.run(
-            ["git", "pull", "--rebase", "origin", "main"],
-            capture_output=True
-        )
-        if result.returncode != 0:
-            subprocess.run(["git", "rebase", "--abort"], capture_output=True)
-            subprocess.run(["rm", "-fr", ".git/rebase-merge"], capture_output=True)
-            subprocess.run(["git", "checkout", "main"], capture_output=True)
-            subprocess.run(["git", "reset", "--hard", "origin/main"], capture_output=True)
-
         pending = os.path.join(REPO_DIR, WATCH_FILE)
         if os.path.exists(pending):
             with open(pending) as f:
                 content = f.read().strip()
-
             if ":" in content:
                 pkg_name, run_number = content.split(":", 1)
             else:
                 pkg_name, run_number = content, "0"
-
             if pkg_name:
                 print(f"[watcher] New package detected: {pkg_name} (run={run_number})")
-                
                 os.remove(pending)
-               
-               
-                # Run analysis 
+                # Run analysis
                 analyze_package(pkg_name, run_number)
-
-        time.sleep(30)
+        time.sleep(5)
 
 
 if __name__ == "__main__":
