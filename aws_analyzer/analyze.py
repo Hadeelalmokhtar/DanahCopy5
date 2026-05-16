@@ -313,19 +313,8 @@ def analyze_package(pkg_name, run_number="0"):
             "dynamic_features": {k: str(v) for k, v in all_features.items()},
         }, f, indent=2)
 
-    # Write done flag
-    flag_path = os.path.join(REPO_DIR, FLAG_DIR, f"ebpf_done_{pkg_name}.flag")
-    with open(flag_path, "w") as f:
-        f.write(run_number)
 
-    # Push results to GitHub
-    print("[analyzer] Pushing results to GitHub...")
-    os.chdir(REPO_DIR)
-    subprocess.run(["git", "pull", "--rebase", "origin", "main"])
-    subprocess.run(["git", "add", "decoy_logs/"])
-    subprocess.run(["git", "commit", "-m", f"eBPF analysis results: {pkg_name}"])
-    subprocess.run(["git", "push", "origin", "main"])
-
+    print(f"[analyzer] eBPF results saved locally at {log_path}")
     print(f"[analyzer] Done ✅ {pkg_name}")
 
 
