@@ -346,9 +346,6 @@ def main():
 
                 # Remove pending file and commit
                 os.remove(pending)
-                subprocess.run(["git", "add", WATCH_FILE])
-                subprocess.run(["git", "commit", "-m", f"Start eBPF analysis: {pkg_name}"])
-                subprocess.run(["git", "push", "origin", "main"])
 
                 # Run analysis
                 analyze_package(pkg_name, run_number)
