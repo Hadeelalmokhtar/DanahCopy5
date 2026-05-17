@@ -69,11 +69,7 @@ CTI_COLUMNS = [
     "dns_query_to_external",
     "http_method",
     "domain_is_known_malicious",
-    "honeytoken_triggered",
-    "spawned_shell",
-    "has_persistence_phase",
-    "contacted_country",
-    "http_exfil_attempt",
+  
     # ── Static — YARA ──
     "yara_credential_theft_indicators",
     "yara_exfiltration_indicators",
@@ -93,23 +89,21 @@ CTI_COLUMNS = [
     "proc_write_binary_dir",
     "proc_ptrace_detected",
     "proc_package_install_runtime",
-     "ebpf_accessed_root",
+    "ebpf_accessed_root",
     "ebpf_accessed_ssh",
     "ebpf_accessed_etc",
-    "ebpf_security_ops",
-    "ebpf_network_ops",
-    "ebpf_process_ops",
-    "ebpf_file_ops",
     "ebpf_privilege_escalation",
     "ebpf_network_activity",
     "ebpf_spawned_process",
     "ebpf_c2_port_suspected",
-    "ebpf_remote_ips_count",
-    "pattern_c2_communication",
-    "pattern_process_injection",
-    "pattern_malicious_probing",
-    "pattern_privilege_escalation",
-    "pattern_file_locking",
+    "c2_port_4444",
+    "c2_port_1337",
+    "c2_port_6667",
+    "c2_port_31337",
+    "c2_port_9001",
+    "c2_port_8080",
+    "c2_port_2323",
+    "c2_port_1234",
 ]
 
 ALL_COLUMNS = DATASET_COLUMNS + CTI_COLUMNS
@@ -120,11 +114,6 @@ DEFAULTS = {
     "dns_query_to_external":              "none",
     "http_method":                        "none",
     "domain_is_known_malicious":          "False",
-    "honeytoken_triggered":               "False",
-    "spawned_shell":                      "False",
-    "has_persistence_phase":              "False",
-    "contacted_country":                  "none",
-    "http_exfil_attempt":                 "False",
     "yara_credential_theft_indicators":   "False",
     "yara_exfiltration_indicators":       "False",
     "yara_shell_execution_indicators":    "False",
@@ -145,20 +134,18 @@ DEFAULTS = {
     "ebpf_accessed_root":           "False",
     "ebpf_accessed_ssh":            "False",
     "ebpf_accessed_etc":            "False",
-    "ebpf_security_ops":            0,
-    "ebpf_network_ops":             0,
-    "ebpf_process_ops":             0,
-    "ebpf_file_ops":                0,
     "ebpf_privilege_escalation":    "False",
     "ebpf_network_activity":        "False",
     "ebpf_spawned_process":         "False",
     "ebpf_c2_port_suspected":       "False",
-    "ebpf_remote_ips_count":        0,
-    "pattern_c2_communication":     "False",
-    "pattern_process_injection":    "False",
-    "pattern_malicious_probing":    "False",
-    "pattern_privilege_escalation": "False",
-    "pattern_file_locking":         "False",
+    "c2_port_4444":                 "False",
+    "c2_port_1337":                 "False",
+    "c2_port_6667":                 "False",
+    "c2_port_31337":                "False",
+    "c2_port_9001":                 "False",
+    "c2_port_8080":                 "False",
+    "c2_port_2323":                 "False",
+    "c2_port_1234":                 "False",  
 }
 
 
@@ -412,21 +399,6 @@ def extract_cti(ml_log, behavioral_log):
         # domain_is_known_malicious — True/False from VirusTotal
         row["domain_is_known_malicious"] = _str_bool(dynamic.get("feat_domain_is_known_malicious", "False"))
 
-        # honeytoken_triggered — True/False
-        row["honeytoken_triggered"] = _str_bool(dynamic.get("feat_honeytoken_triggered", "False"))
-
-        # spawned_shell — True/False
-        row["spawned_shell"] = _str_bool(dynamic.get("feat_spawned_shell", "False"))
-
-        # has_persistence_phase — True/False
-        row["has_persistence_phase"] = _str_bool(dynamic.get("feat_has_persistence_phase", "False"))
-
-        # contacted_country — single country name from ip-api
-        countries = dynamic.get("feat_contacted_countries", "none") or "none"
-        row["contacted_country"] = countries.split("|")[0].strip() if "|" in countries else countries
-
-        # http_exfil_attempt — True/False
-        row["http_exfil_attempt"] = _str_bool(dynamic.get("feat_http_exfil_attempt", "False"))
 
         row["proc_privilege_escalation"]    = _str_bool(dynamic.get("proc_privilege_escalation",    "False"))
         row["proc_write_binary_dir"]        = _str_bool(dynamic.get("proc_write_binary_dir",        "False"))
@@ -436,21 +408,25 @@ def extract_cti(ml_log, behavioral_log):
         row["ebpf_accessed_root"]           = _str_bool(dynamic.get("ebpf_accessed_root",           "False"))
         row["ebpf_accessed_ssh"]            = _str_bool(dynamic.get("ebpf_accessed_ssh",            "False"))
         row["ebpf_accessed_etc"]            = _str_bool(dynamic.get("ebpf_accessed_etc",            "False"))
-        row["ebpf_security_ops"]            = dynamic.get("ebpf_security_ops",                      0)
-        row["ebpf_network_ops"]             = dynamic.get("ebpf_network_ops",                       0)
-        row["ebpf_process_ops"]             = dynamic.get("ebpf_process_ops",                       0)
-        row["ebpf_file_ops"]                = dynamic.get("ebpf_file_ops",                          0)
+       
         row["ebpf_privilege_escalation"]    = _str_bool(dynamic.get("ebpf_privilege_escalation",    "False"))
         row["ebpf_network_activity"]        = _str_bool(dynamic.get("ebpf_network_activity",        "False"))
         row["ebpf_spawned_process"]         = _str_bool(dynamic.get("ebpf_spawned_process",         "False"))
         row["ebpf_c2_port_suspected"]       = _str_bool(dynamic.get("ebpf_c2_port_suspected",       "False"))
-        row["ebpf_remote_ips_count"]        = dynamic.get("ebpf_remote_ips_count",                  0)
-        row["pattern_c2_communication"]     = _str_bool(dynamic.get("pattern_c2_communication",     "False"))
-        row["pattern_process_injection"]    = _str_bool(dynamic.get("pattern_process_injection",    "False"))
-        row["pattern_malicious_probing"]    = _str_bool(dynamic.get("pattern_malicious_probing",    "False"))
-        row["pattern_privilege_escalation"] = _str_bool(dynamic.get("pattern_privilege_escalation", "False"))
-        row["pattern_file_locking"]         = _str_bool(dynamic.get("pattern_file_locking",         "False"))
        
+        remote_ports_str = str(dynamic.get("ebpf_remote_ports", ""))
+        try:
+            detected_ports = set(int(p) for p in remote_ports_str.split("|") if p.strip().isdigit())
+        except:
+            detected_ports = set()
+        row["c2_port_4444"]  = str(4444  in detected_ports)
+        row["c2_port_1337"]  = str(1337  in detected_ports)
+        row["c2_port_6667"]  = str(6667  in detected_ports)
+        row["c2_port_31337"] = str(31337 in detected_ports)
+        row["c2_port_9001"]  = str(9001  in detected_ports)
+        row["c2_port_8080"]  = str(8080  in detected_ports)
+        row["c2_port_2323"]  = str(2323  in detected_ports)
+        row["c2_port_1234"]  = str(1234  in detected_ports)
 
         # NOTE: YARA and Semgrep already set from ml_log["static_analysis"] above
 
