@@ -235,7 +235,8 @@ def parse_strace_full(path):
 
     syscall_re = re.compile(r'^\d+\s+(\w+)\(')
     connect_re = re.compile(r'connect\(.*sin_port=htons\((\d+)\).*inet_addr\("([^"]+)"\)')
-
+    execve_security_re = re.compile(r'execve\(".*?(chmod|chown|chgrp|setuid|ptrace|capset|sudo|su)\b')
+   
     try:
         with open(path) as f:
             for line in f:
@@ -249,7 +250,11 @@ def parse_strace_full(path):
                     if name in network_calls:  counts["ebpf_network_ops"]  += 1
                     if name in process_calls:  counts["ebpf_process_ops"]  += 1
                     if name in file_calls:     counts["ebpf_file_ops"]     += 1
-
+                        
+                # Detect security-related execve calls (chmod, chown, sudo, etc.)
+                es = execve_security_re.search(line)
+                if es:
+                    counts["ebpf_security_ops"] += 1
                 cm = connect_re.search(line)
                 if cm:
                     port = int(cm.group(1))
